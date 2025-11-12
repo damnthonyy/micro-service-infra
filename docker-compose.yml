@@ -19,11 +19,11 @@ services:
       timeout: 3s
       retries: 10
 
-  api-microservice-infra-boilerplate:
+  backend-microservice-infra-boilerplate:
     build:
-      context: ./api
+      context: ./backend
       dockerfile: Dockerfile
-    container_name: api-microservice-infra-boilerplate
+    container_name: backend-microservice-infra-boilerplate
     env_file: .env
     environment:
       NODE_ENV: development
