@@ -26,13 +26,7 @@ services:
     container_name: backend-microservice-infra-boilerplate
     env_file: .env
     environment:
-      NODE_ENV: development
-      DB_HOST: db-microservice-infra-boilerplate
-      DB_PORT: ${DB_PORT}
-      DB_USER: ${DB_USER}
-      DB_PASS: ${DB_PASS}
-      DB_NAME: ${DB_NAME}
-      API_PORT: ${API_PORT}
+      NODE_ENV : development
     depends_on:
       db-microservice-infra-boilerplate:
         condition: service_healthy
