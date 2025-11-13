@@ -57,21 +57,43 @@ jobs:
         run: |
           docker compose up -d db-microservice-infra-boilerplate
           echo "⏳ Waiting for database to be ready..."
-          timeout 60 bash -c 'until docker compose exec -T db-microservice-infra-boilerplate pg_isready -U app -d appdb; do sleep 2; done'
+          for i in {1..30}; do
+            if docker compose exec -T db-microservice-infra-boilerplate pg_isready -U app -d appdb > /dev/null 2>&1; then
+              echo "✅ Database is ready (attempt $i)"
+              break
+            fi
+            echo "Waiting for database... (attempt $i/30)"
+            sleep 2
+          done
+          echo "⏳ Waiting additional time for database to fully initialize..."
+          sleep 10
+          echo "✅ Verifying database is accessible from host..."
+          docker compose ps
+          echo "Testing port 5432 accessibility..."
+          timeout 5 bash -c 'until nc -z localhost 5432; do sleep 1; done' && echo "✅ Port 5432 is accessible" || echo "⚠️ Port test failed, but continuing..."
+          echo "✅ Database should be ready"
 
       - name: 🏗️ Build & Export OpenAPI
         run: |
           cd backend
           npm run build
           echo "🚀 Starting backend to generate OpenAPI..."
+          echo "⏳ Waiting a bit more before starting backend..."
+          sleep 3
           NODE_ENV=development DB_HOST=localhost node dist/main.js > backend.log 2>&1 &
           BACKEND_PID=$!
           echo "Backend PID: $BACKEND_PID"
-          echo "⏳ Waiting for backend to generate OpenAPI..."
-          for i in {1..30}; do
+          echo "⏳ Waiting for backend to connect and generate OpenAPI..."
+          sleep 5
+          for i in {1..40}; do
             if [ -f openapi.yaml ] && [ -s openapi.yaml ] && grep -q "openapi: 3.0.0" openapi.yaml; then
               echo "✅ OpenAPI file generated successfully"
               break
+            fi
+            if grep -q "Unable to connect to the database" backend.log && [ $i -gt 20 ]; then
+              echo "❌ Database connection failed after 20 attempts"
+              cat backend.log
+              exit 1
             fi
             sleep 1
           done
