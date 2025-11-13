@@ -11,6 +11,8 @@ async function bootstrap() {
     .setTitle('Backend Microservice Infra Boilerplate')
     .setDescription('Backend Microservice Infra Boilerplate')
     .setVersion('1.0.0')
+    .addServer(`http://localhost:${process.env.API_PORT || 3000}`, 'Local development server')
+    .addTag('users', 'User management endpoints')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

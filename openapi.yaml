@@ -2,6 +2,7 @@ openapi: 3.0.0
 paths:
   /users:
     get:
+      description: Retrieves a list of all users in the system
       operationId: AppController_getUsers
       parameters: []
       responses:
@@ -12,6 +13,7 @@ paths:
         - users
   /users/{id}:
     get:
+      description: Retrieves a specific user by their unique identifier
       operationId: AppController_getUser
       parameters:
         - name: id
@@ -30,7 +32,11 @@ info:
   description: Backend Microservice Infra Boilerplate
   version: 1.0.0
   contact: {}
-tags: []
-servers: []
+tags:
+  - name: users
+    description: User management endpoints
+servers:
+  - url: http://localhost:3000
+    description: Local development server
 components:
   schemas: {}
