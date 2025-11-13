@@ -17,11 +17,25 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
 
       - name: 📦 Install dependencies
         run: |
           cd backend
-          npm ci
+          for i in 1 2 3; do
+            echo "Attempt $i to install dependencies..."
+            if npm ci --prefer-offline --no-audit; then
+              echo "✅ Dependencies installed successfully"
+              break
+            elif [ $i -eq 3 ]; then
+              echo "⚠️ npm ci failed, trying npm install as fallback..."
+              npm install --prefer-offline --no-audit || exit 1
+            else
+              echo "⏳ Retrying in 5 seconds..."
+              sleep 5
+            fi
+          done
           cd ..
 
       - name: 🔧 Create .env file
@@ -79,7 +93,10 @@ jobs:
           cd ..
 
       - name: 🔍 Install Spectral
-        run: npm i -g @stoplight/spectral-cli
+        run: |
+          npm i -g @stoplight/spectral-cli --prefer-offline --no-audit || \
+          (sleep 5 && npm i -g @stoplight/spectral-cli --prefer-offline --no-audit) || \
+          (sleep 10 && npm i -g @stoplight/spectral-cli --prefer-offline --no-audit)
 
       - name: 🧪 Lint OpenAPI spec
         run: |
