@@ -148,6 +148,9 @@ docker compose logs -f backend-microservice-infra-boilerplate
 
 # Lint OpenAPI specification locally
 npx @stoplight/spectral-cli lint openapi.yaml
+
+# Generate report JSON
+npx @stoplight/spectral-cli lint openapi.yaml -f json -o spectral-report.json
 ```
 
 ## 🧪 Tests
