@@ -80,7 +80,14 @@ jobs:
           echo "🚀 Starting backend to generate OpenAPI..."
           echo "⏳ Waiting a bit more before starting backend..."
           sleep 3
-          NODE_ENV=development DB_HOST=localhost node dist/main.js > backend.log 2>&1 &
+          NODE_ENV=development \
+          DB_HOST=localhost \
+          DB_PORT=5432 \
+          DB_USER=app \
+          DB_PASS=app \
+          DB_NAME=appdb \
+          API_PORT=3000 \
+          node dist/main.js > backend.log 2>&1 &
           BACKEND_PID=$!
           echo "Backend PID: $BACKEND_PID"
           echo "⏳ Waiting for backend to connect and generate OpenAPI..."
