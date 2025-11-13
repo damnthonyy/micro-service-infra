@@ -47,23 +47,47 @@ jobs:
 
       - name: 🏗️ Build & Export OpenAPI
         run: |
-          touch openapi.yaml
           cd backend
           npm run build
-          NODE_ENV=development DB_HOST=localhost node dist/main.js &
+          echo "🚀 Starting backend to generate OpenAPI..."
+          NODE_ENV=development DB_HOST=localhost node dist/main.js > backend.log 2>&1 &
           BACKEND_PID=$!
+          echo "Backend PID: $BACKEND_PID"
           echo "⏳ Waiting for backend to generate OpenAPI..."
-          timeout 30 bash -c 'until [ -f ../openapi.yaml ] && [ -s ../openapi.yaml ]; do sleep 1; done' || true
-          sleep 2
+          for i in {1..30}; do
+            if [ -f openapi.yaml ] && [ -s openapi.yaml ] && grep -q "openapi: 3.0.0" openapi.yaml; then
+              echo "✅ OpenAPI file generated successfully"
+              break
+            fi
+            sleep 1
+          done
+          sleep 3
+          if [ -f openapi.yaml ] && [ -s openapi.yaml ]; then
+            echo "✅ openapi.yaml generated successfully"
+            head -20 openapi.yaml
+            mv openapi.yaml ../openapi.yaml
+          else
+            echo "❌ Failed to generate openapi.yaml"
+            echo "Backend logs:"
+            cat backend.log || true
+            echo "Files in backend directory:"
+            ls -la || true
+            exit 1
+          fi
           kill $BACKEND_PID 2>/dev/null || true
+          wait $BACKEND_PID 2>/dev/null || true
           cd ..
-          echo "✅ openapi.yaml should be generated at the root"
 
       - name: 🔍 Install Spectral
         run: npm i -g @stoplight/spectral-cli
 
       - name: 🧪 Lint OpenAPI spec
-        run: spectral lint openapi.yaml -f json -o spectral-report.json
+        run: |
+          if [ ! -f openapi.yaml ] || [ ! -s openapi.yaml ]; then
+            echo "❌ openapi.yaml is missing or empty"
+            exit 1
+          fi
+          spectral lint openapi.yaml -f json -o spectral-report.json || true
 
       - name: 📤 Upload lint report
         uses: actions/upload-artifact@v4
