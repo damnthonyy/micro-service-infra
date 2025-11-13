@@ -24,12 +24,38 @@ jobs:
           npm ci
           cd ..
 
+      - name: 🔧 Create .env file
+        run: |
+          cat > .env << EOF
+          POSTGRES_USER=app
+          POSTGRES_PASSWORD=app
+          POSTGRES_DB=appdb
+          POSTGRES_PORT=5432
+          API_PORT=3000
+          DB_HOST=localhost
+          DB_PORT=5432
+          DB_USER=app
+          DB_PASS=app
+          DB_NAME=appdb
+          EOF
+
+      - name: 🐳 Start Docker Compose services
+        run: |
+          docker compose up -d db-microservice-infra-boilerplate
+          echo "⏳ Waiting for database to be ready..."
+          timeout 60 bash -c 'until docker compose exec -T db-microservice-infra-boilerplate pg_isready -U app -d appdb; do sleep 2; done'
+
       - name: 🏗️ Build & Export OpenAPI
         run: |
+          touch openapi.yaml
           cd backend
           npm run build
-          node dist/main.js &
-          sleep 5
+          NODE_ENV=development DB_HOST=localhost node dist/main.js &
+          BACKEND_PID=$!
+          echo "⏳ Waiting for backend to generate OpenAPI..."
+          timeout 30 bash -c 'until [ -f ../openapi.yaml ] && [ -s ../openapi.yaml ]; do sleep 1; done' || true
+          sleep 2
+          kill $BACKEND_PID 2>/dev/null || true
           cd ..
           echo "✅ openapi.yaml should be generated at the root"
 
