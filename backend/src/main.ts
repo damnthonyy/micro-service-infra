@@ -21,10 +21,11 @@ async function bootstrap() {
   const yaml = require('js-yaml');
   const outPath = join(__dirname, '..', '..', 'openapi.yaml');
   writeFileSync(outPath, yaml.dump(document), 'utf8');
+  console.log(`✅ OpenAPI spec exported to: ${outPath}`);
 
   await app.listen(process.env.API_PORT || 3000);
-  console.log(`Backend is running on: http://localhost:${process.env.API_PORT || 3000}`);
-  console.log(`Swagger is running on: http://localhost:${process.env.API_PORT || 3000}/docs`);
+  console.log(`🚀 Server running on: http://localhost:${process.env.API_PORT || 3000}`);
+  console.log(`🔗 Swagger UI: http://localhost:${process.env.API_PORT || 3000}/docs`);
 }
 bootstrap();
 

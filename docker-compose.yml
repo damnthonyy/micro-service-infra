@@ -1,4 +1,3 @@
-version: "3.9"
 
 services:
   db-microservice-infra-boilerplate:
@@ -26,12 +25,14 @@ services:
     container_name: backend-microservice-infra-boilerplate
     env_file: .env
     environment:
-      NODE_ENV : development
+      NODE_ENV: development
     depends_on:
       db-microservice-infra-boilerplate:
         condition: service_healthy
     ports:
       - "${API_PORT:-3000}:3000"
+    volumes:
+      - ./openapi.yaml:/app/openapi.yaml
 
 volumes:
   db-microservice-infra-boilerplate_data:
