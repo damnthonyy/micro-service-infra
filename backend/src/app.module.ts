@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
+import { RootController } from './root.controller';
+import { ProductsController } from './products.controller';
+import { OrdersController } from './orders.controller';
 import * as crypto from 'crypto';
 
 if (!(global as any).crypto) {
@@ -26,6 +29,6 @@ if (!(global as any).crypto) {
       inject: [ConfigService],
     }),
   ],
-  controllers: [AppController],
+  controllers: [RootController, AppController, ProductsController, OrdersController],
 })
 export class AppModule {}

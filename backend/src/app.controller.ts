@@ -4,6 +4,8 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 @ApiTags('users')
 @Controller('users')
 export class AppController {
+
+  // GET /users
   @Get()
   @ApiOperation({ 
     summary: 'Get all users',
@@ -16,6 +18,9 @@ export class AppController {
       { id: 2, name: 'Malick' }
     ];
   }
+
+
+  // GET /users/{id}
   @Get(':id')
   @ApiOperation({ 
     summary: 'Get a user by id',
