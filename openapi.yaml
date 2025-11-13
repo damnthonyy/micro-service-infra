@@ -1,0 +1,36 @@
+openapi: 3.0.0
+paths:
+  /users:
+    get:
+      operationId: AppController_getUsers
+      parameters: []
+      responses:
+        '200':
+          description: List of users successfully retrieved
+      summary: Get all users
+      tags: &ref_0
+        - users
+  /users/{id}:
+    get:
+      operationId: AppController_getUser
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: User id
+          schema:
+            type: number
+      responses:
+        '200':
+          description: User found
+      summary: Get a user by id
+      tags: *ref_0
+info:
+  title: Backend Microservice Infra Boilerplate
+  description: Backend Microservice Infra Boilerplate
+  version: 1.0.0
+  contact: {}
+tags: []
+servers: []
+components:
+  schemas: {}

@@ -19,7 +19,7 @@ async function bootstrap() {
 
   
   const yaml = require('js-yaml');
-  const outPath = join(__dirname, '..', '..', 'openapi.yaml');
+  const outPath = join(__dirname, '..', 'openapi.yaml');
   writeFileSync(outPath, yaml.dump(document), 'utf8');
   console.log(`✅ OpenAPI spec exported to: ${outPath}`);
 

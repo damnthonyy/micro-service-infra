@@ -1,5 +1,5 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 
 @ApiTags('users')
 @Controller('users')
@@ -8,7 +8,17 @@ export class AppController {
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, description: 'List of users successfully retrieved' })
   getUsers() {
-    return [{ id: 1, name: 'Malick' }];
+    return [
+      { id: 1, name: 'Antoine' },
+      { id: 2, name: 'Malick' }
+    ];
+  }
+  @Get(':id')
+  @ApiOperation({ summary: 'Get a user by id' })
+  @ApiParam({ name: 'id', description: 'User id', type: Number })
+  @ApiResponse({ status: 200, description: 'User found' })
+  getUser(@Param('id') id: number) {
+    return { id, name: `User ${id}` };
   }
 }
 
