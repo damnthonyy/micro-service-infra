@@ -92,26 +92,40 @@ The GitHub Actions pipeline (`ci.yml`) automatically performs:
 2. PostgreSQL startup
 3. Build and OpenAPI specification generation
 4. Linting with Spectral
-5. **LLM-powered feedback generation** (for PRs to main)
-6. Automatic PR comments with detailed explanations
-7. Linting report upload
+5. **Formatage du rapport en Markdown** pour une meilleure visibilité
+6. **Commentaires automatiques sur les PRs** avec le rapport formaté
+7. Upload des rapports en artefacts
 
-#### Configuration requise pour le feedback LLM
+#### Rapport Spectral formaté
 
-Pour activer le feedback LLM dans les PRs, vous devez configurer le secret GitHub suivant :
+Le CI génère automatiquement un rapport Spectral formaté en Markdown qui est :
+- **Affiché dans les commentaires PR** (limité à 3000 caractères)
+- **Filtré par sévérité** : Seules les erreurs (severity 0) et avertissements (severity 1) sont affichées
+- **Stocké en artefacts** : Rapport complet disponible pour analyse (rétention 30 jours)
 
-1. Allez dans **Settings** → **Secrets and variables** → **Actions** de votre repository GitHub
-2. Cliquez sur **New repository secret**
-3. Ajoutez un secret nommé `OPENAI_API_KEY` avec votre clé API OpenAI
-4. Le workflow utilisera automatiquement ce secret pour générer des explications détaillées des erreurs Spectral
+#### Feedback LLM optionnel
 
-**Note :** Le feedback LLM ne s'affiche que sur les Pull Requests vers la branche `main`.
+Pour obtenir des explications détaillées et des corrections proposées par IA, utilisez le workflow manuel `Generate LLM Feedback` :
 
-#### Optimisations du rapport
+1. **Via GitHub Actions** :
+   - Allez dans l'onglet **Actions**
+   - Sélectionnez le workflow **Generate LLM Feedback**
+   - Cliquez sur **Run workflow**
+   - Optionnellement, fournissez un numéro de PR pour commenter automatiquement
 
-- **Filtrage par sévérité** : Seules les erreurs (severity 0) et avertissements (severity 1) sont traités. Les informations (info) et suggestions (hint) sont exclues pour se concentrer sur les problèmes importants.
-- **Limitation de taille** : Les commentaires PR sont limités à 3000 caractères pour respecter les limites GitHub. Le rapport complet est disponible dans les artefacts.
-- **Artefacts** : Tous les rapports (JSON complet, markdown complet et tronqué) sont stockés en artefacts GitHub avec une rétention de 30 jours pour analyse ultérieure.
+2. **Localement** :
+   ```bash
+   # Générer le rapport Spectral
+   npm run lint:openapi
+   
+   # Générer le feedback LLM (nécessite OPENAI_API_KEY dans .env)
+   npm run lint:llm
+   
+   # Formater le rapport
+   npm run format:spectral
+   ```
+
+**Configuration requise** : Ajoutez `OPENAI_API_KEY` dans vos secrets GitHub (Settings → Secrets and variables → Actions) ou dans votre fichier `.env` pour usage local.
 
 ### Swagger Documentation
 
@@ -171,11 +185,11 @@ npx @stoplight/spectral-cli lint openapi.yaml
 # Generate report JSON
 npx @stoplight/spectral-cli lint openapi.yaml -f json -o spectral-report.json
 
-# Generate LLM feedback (requires OPENAI_API_KEY in .env)
-npm run lint:llm
+# Format Spectral report to Markdown (for better visibility)
+npm run format:spectral
 
-# Format LLM report for PR comments
-node tools/formatReport.js
+# Generate LLM feedback (optional, requires OPENAI_API_KEY in .env)
+npm run lint:llm
 ```
 
 ## 🧪 Tests
