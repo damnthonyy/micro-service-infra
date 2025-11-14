@@ -1,5 +1,15 @@
 {
+  "type": "module",
   "devDependencies": {
     "@stoplight/spectral-cli": "^6.15.0"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "openai": "^6.9.0"
+  },
+  "scripts": {
+    "lint:openapi": "spectral lint openapi.yaml -f json -o spectral-report.json",
+    "lint:llm": "node tools/llmFeedback.js",
+    "format:spectral": "node tools/formatSpectralReport.js"
   }
 }

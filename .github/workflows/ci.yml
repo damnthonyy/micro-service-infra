@@ -9,6 +9,10 @@ on:
 jobs:
   generate-and-lint-openapi:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
     steps:
       - name: 🧩 Checkout code
         uses: actions/checkout@v4
@@ -135,9 +139,100 @@ jobs:
           fi
           spectral lint openapi.yaml -f json -o spectral-report.json || true
 
+      - name: 📦 Install root dependencies
+        run: |
+          npm install --prefer-offline --no-audit || true
+
+      - name: 📝 Format Spectral report for PR
+        run: |
+          if [ -f spectral-report.json ]; then
+            node tools/formatSpectralReport.js > /dev/null 2>&1 || echo "⚠️ Erreur lors du formatage du rapport"
+          fi
+
+      - name: 💬 Comment PR with Spectral report
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const MAX_COMMENT_LENGTH = 3000;
+            
+            let comment = '## 📋 Rapport de validation OpenAPI\n\n';
+            
+            // Priorité : rapport tronqué > rapport complet > message par défaut
+            if (fs.existsSync('spectral-report-truncated.md')) {
+              comment = fs.readFileSync('spectral-report-truncated.md', 'utf8');
+            } else if (fs.existsSync('spectral-report.md')) {
+              const fullReport = fs.readFileSync('spectral-report.md', 'utf8');
+              if (fullReport.length > MAX_COMMENT_LENGTH) {
+                const truncated = fullReport.substring(0, MAX_COMMENT_LENGTH);
+                const lastNewline = truncated.lastIndexOf('\n');
+                comment = truncated.substring(0, lastNewline > 0 ? lastNewline : MAX_COMMENT_LENGTH);
+                comment += `\n\n---\n\n⚠️ **Rapport tronqué** (limite GitHub de ${MAX_COMMENT_LENGTH} caractères)\n\n📥 Consultez l'artefact \`spectral-report\` pour le rapport complet.`;
+              } else {
+                comment = fullReport;
+              }
+            } else {
+              comment = '## ✅ Rapport de validation OpenAPI\n\n🎉 Aucune erreur détectée ! Votre spécification OpenAPI est conforme.';
+            }
+            
+            // S'assurer que le commentaire ne dépasse pas la limite
+            if (comment.length > MAX_COMMENT_LENGTH) {
+              comment = comment.substring(0, MAX_COMMENT_LENGTH);
+              const lastNewline = comment.lastIndexOf('\n');
+              comment = comment.substring(0, lastNewline > 0 ? lastNewline : MAX_COMMENT_LENGTH);
+              comment += `\n\n---\n\n⚠️ **Rapport tronqué** (limite de ${MAX_COMMENT_LENGTH} caractères)\n\n📥 Consultez l'artefact \`spectral-report\` pour le rapport complet.`;
+            }
+            
+            // Ajouter un lien vers le workflow LLM optionnel
+            if (!comment.includes('🎉 Aucune erreur')) {
+              comment += `\n\n---\n\n💡 **Besoin d'explications détaillées ?** Utilisez le workflow \`Generate LLM Feedback\` pour obtenir des explications et corrections proposées par IA.`;
+            }
+            
+            // Chercher un commentaire existant et créer/mettre à jour
+            try {
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+              });
+              
+              const botComment = comments.find(c => 
+                c.user.type === 'Bot' && 
+                c.body.includes('Rapport de validation OpenAPI')
+              );
+              
+              if (botComment) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: botComment.id,
+                  body: comment
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body: comment
+                });
+              }
+            } catch (error) {
+              console.error('⚠️ Impossible de commenter la PR:', error.message);
+              console.error('💡 Cela peut arriver si la PR vient d\'un fork ou si les permissions sont insuffisantes.');
+              console.error('📥 Le rapport est disponible dans les artefacts.');
+              // Ne pas faire échouer le workflow
+            }
+
       - name: 📤 Upload lint report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: spectral-report
-          path: spectral-report.json
+          path: |
+            spectral-report.json
+            spectral-report.md
+            spectral-report-truncated.md
+          retention-days: 30
 

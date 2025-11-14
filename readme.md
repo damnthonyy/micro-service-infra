@@ -92,7 +92,40 @@ The GitHub Actions pipeline (`ci.yml`) automatically performs:
 2. PostgreSQL startup
 3. Build and OpenAPI specification generation
 4. Linting with Spectral
-5. Linting report upload
+5. **Formatage du rapport en Markdown** pour une meilleure visibilité
+6. **Commentaires automatiques sur les PRs** avec le rapport formaté
+7. Upload des rapports en artefacts
+
+#### Rapport Spectral formaté
+
+Le CI génère automatiquement un rapport Spectral formaté en Markdown qui est :
+- **Affiché dans les commentaires PR** (limité à 3000 caractères)
+- **Filtré par sévérité** : Seules les erreurs (severity 0) et avertissements (severity 1) sont affichées
+- **Stocké en artefacts** : Rapport complet disponible pour analyse (rétention 30 jours)
+
+#### Feedback LLM optionnel
+
+Pour obtenir des explications détaillées et des corrections proposées par IA, utilisez le workflow manuel `Generate LLM Feedback` :
+
+1. **Via GitHub Actions** :
+   - Allez dans l'onglet **Actions**
+   - Sélectionnez le workflow **Generate LLM Feedback**
+   - Cliquez sur **Run workflow**
+   - Optionnellement, fournissez un numéro de PR pour commenter automatiquement
+
+2. **Localement** :
+   ```bash
+   # Générer le rapport Spectral
+   npm run lint:openapi
+   
+   # Générer le feedback LLM (nécessite OPENAI_API_KEY dans .env)
+   npm run lint:llm
+   
+   # Formater le rapport
+   npm run format:spectral
+   ```
+
+**Configuration requise** : Ajoutez `OPENAI_API_KEY` dans vos secrets GitHub (Settings → Secrets and variables → Actions) ou dans votre fichier `.env` pour usage local.
 
 ### Swagger Documentation
 
@@ -151,6 +184,12 @@ npx @stoplight/spectral-cli lint openapi.yaml
 
 # Generate report JSON
 npx @stoplight/spectral-cli lint openapi.yaml -f json -o spectral-report.json
+
+# Format Spectral report to Markdown (for better visibility)
+npm run format:spectral
+
+# Generate LLM feedback (optional, requires OPENAI_API_KEY in .env)
+npm run lint:llm
 ```
 
 ## 🧪 Tests

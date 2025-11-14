@@ -1,0 +1,117 @@
+name: Generate LLM Feedback
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number (optional, for commenting)'
+        required: false
+        type: string
+
+jobs:
+  generate-llm-feedback:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🧩 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: |
+          npm install --prefer-offline --no-audit || true
+
+      - name: 🔍 Install Spectral
+        run: |
+          npm i -g @stoplight/spectral-cli --prefer-offline --no-audit || \
+          (sleep 5 && npm i -g @stoplight/spectral-cli --prefer-offline --no-audit) || \
+          (sleep 10 && npm i -g @stoplight/spectral-cli --prefer-offline --no-audit)
+
+      - name: 🧪 Generate Spectral report (if not exists)
+        run: |
+          if [ ! -f spectral-report.json ]; then
+            echo "📝 Génération du rapport Spectral..."
+            if [ -f openapi.yaml ]; then
+              spectral lint openapi.yaml -f json -o spectral-report.json || true
+            else
+              echo "❌ openapi.yaml non trouvé. Assurez-vous d'avoir généré la spec OpenAPI."
+              exit 1
+            fi
+          else
+            echo "✅ Rapport Spectral existant trouvé"
+          fi
+
+      - name: 🤖 Generate LLM feedback
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "❌ OPENAI_API_KEY non configuré."
+            echo "📝 Configurez le secret OPENAI_API_KEY dans Settings > Secrets and variables > Actions"
+            exit 1
+          fi
+          
+          if [ ! -f spectral-report.json ] || [ ! -s spectral-report.json ]; then
+            echo "❌ Aucun rapport Spectral trouvé. Exécutez d'abord le workflow CI pour générer le rapport."
+            exit 1
+          fi
+          
+          echo "🔍 Génération du feedback LLM..."
+          npm run lint:llm || exit 1
+
+      - name: 📝 Format LLM report
+        run: |
+          if [ -f spectral-llm-report.json ]; then
+            node tools/formatReport.js > /dev/null 2>&1 || echo "⚠️ Erreur lors du formatage du rapport"
+          fi
+
+      - name: 💬 Comment PR (if PR number provided)
+        if: github.event.inputs.pr_number != ''
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const prNumber = parseInt(context.payload.inputs.pr_number);
+            const MAX_COMMENT_LENGTH = 3000;
+            
+            let comment = '## 🤖 Feedback LLM - Explications détaillées\n\n';
+            
+            if (fs.existsSync('spectral-llm-report-truncated.md')) {
+              comment = fs.readFileSync('spectral-llm-report-truncated.md', 'utf8');
+            } else if (fs.existsSync('spectral-llm-report.md')) {
+              const fullReport = fs.readFileSync('spectral-llm-report.md', 'utf8');
+              if (fullReport.length > MAX_COMMENT_LENGTH) {
+                const truncated = fullReport.substring(0, MAX_COMMENT_LENGTH);
+                const lastNewline = truncated.lastIndexOf('\n');
+                comment = truncated.substring(0, lastNewline > 0 ? lastNewline : MAX_COMMENT_LENGTH);
+                comment += `\n\n---\n\n⚠️ **Rapport tronqué** (limite GitHub de ${MAX_COMMENT_LENGTH} caractères)\n\n📥 Consultez l'artefact pour le rapport complet.`;
+              } else {
+                comment = fullReport;
+              }
+            } else {
+              comment = '## ✅ Aucune erreur à expliquer';
+            }
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: comment
+            });
+
+      - name: 📤 Upload LLM report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: spectral-llm-report
+          path: |
+            spectral-llm-report.json
+            spectral-llm-report.md
+            spectral-llm-report-truncated.md
+          retention-days: 30
+
