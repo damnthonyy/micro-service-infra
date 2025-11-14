@@ -92,7 +92,26 @@ The GitHub Actions pipeline (`ci.yml`) automatically performs:
 2. PostgreSQL startup
 3. Build and OpenAPI specification generation
 4. Linting with Spectral
-5. Linting report upload
+5. **LLM-powered feedback generation** (for PRs to main)
+6. Automatic PR comments with detailed explanations
+7. Linting report upload
+
+#### Configuration requise pour le feedback LLM
+
+Pour activer le feedback LLM dans les PRs, vous devez configurer le secret GitHub suivant :
+
+1. Allez dans **Settings** → **Secrets and variables** → **Actions** de votre repository GitHub
+2. Cliquez sur **New repository secret**
+3. Ajoutez un secret nommé `OPENAI_API_KEY` avec votre clé API OpenAI
+4. Le workflow utilisera automatiquement ce secret pour générer des explications détaillées des erreurs Spectral
+
+**Note :** Le feedback LLM ne s'affiche que sur les Pull Requests vers la branche `main`.
+
+#### Optimisations du rapport
+
+- **Filtrage par sévérité** : Seules les erreurs (severity 0) et avertissements (severity 1) sont traités. Les informations (info) et suggestions (hint) sont exclues pour se concentrer sur les problèmes importants.
+- **Limitation de taille** : Les commentaires PR sont limités à 3000 caractères pour respecter les limites GitHub. Le rapport complet est disponible dans les artefacts.
+- **Artefacts** : Tous les rapports (JSON complet, markdown complet et tronqué) sont stockés en artefacts GitHub avec une rétention de 30 jours pour analyse ultérieure.
 
 ### Swagger Documentation
 
@@ -151,6 +170,12 @@ npx @stoplight/spectral-cli lint openapi.yaml
 
 # Generate report JSON
 npx @stoplight/spectral-cli lint openapi.yaml -f json -o spectral-report.json
+
+# Generate LLM feedback (requires OPENAI_API_KEY in .env)
+npm run lint:llm
+
+# Format LLM report for PR comments
+node tools/formatReport.js
 ```
 
 ## 🧪 Tests
