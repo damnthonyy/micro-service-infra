@@ -139,86 +139,51 @@ jobs:
         run: |
           npm install --prefer-offline --no-audit || true
 
-      - name: 🤖 Generate LLM feedback
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      - name: 📝 Format Spectral report for PR
         run: |
-          if [ -z "$OPENAI_API_KEY" ]; then
-            echo "⚠️ OPENAI_API_KEY non configuré. Le feedback LLM sera ignoré."
-            echo "📝 Configurez le secret OPENAI_API_KEY dans Settings > Secrets and variables > Actions"
-            echo "[]" > spectral-llm-report.json
-            exit 0
-          fi
-          
-          if [ -f spectral-report.json ] && [ -s spectral-report.json ]; then
-            # Vérifier si le rapport contient des erreurs avec Node.js
-            ERROR_COUNT=$(node -e "const report = require('./spectral-report.json'); console.log(Array.isArray(report) ? report.length : 0);")
-            if [ "$ERROR_COUNT" -gt 0 ]; then
-              echo "🔍 Génération du feedback LLM pour $ERROR_COUNT erreur(s)..."
-              npm run lint:llm || echo "⚠️ Erreur lors de la génération du feedback LLM"
-            else
-              echo "✅ Aucune erreur détectée, pas besoin de feedback LLM"
-              echo "[]" > spectral-llm-report.json
-            fi
-          else
-            echo "✅ Aucune erreur détectée"
-            echo "[]" > spectral-llm-report.json
+          if [ -f spectral-report.json ]; then
+            node tools/formatSpectralReport.js > /dev/null 2>&1 || echo "⚠️ Erreur lors du formatage du rapport"
           fi
 
-      - name: 📝 Format report for PR
-        run: |
-          if [ -f spectral-llm-report.json ]; then
-            node tools/formatReport.js > spectral-llm-report-output.txt 2>&1 || echo "⚠️ Erreur lors du formatage du rapport"
-            # Extraire le rapport tronqué depuis la sortie
-            if [ -f spectral-llm-report-truncated.md ]; then
-              echo "✅ Rapport formaté et tronqué créé"
-            fi
-          fi
-
-      - name: 💬 Comment PR with LLM report
+      - name: 💬 Comment PR with Spectral report
         if: github.event_name == 'pull_request' && github.base_ref == 'main'
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            const path = require('path');
-            
-            let comment = '## 📋 Rapport de validation OpenAPI avec feedback LLM\n\n';
             const MAX_COMMENT_LENGTH = 3000;
             
-            // Priorité : rapport tronqué > rapport complet > JSON > message par défaut
-            if (fs.existsSync('spectral-llm-report-truncated.md')) {
-              comment = fs.readFileSync('spectral-llm-report-truncated.md', 'utf8');
-            } else if (fs.existsSync('spectral-llm-report.md')) {
-              const fullReport = fs.readFileSync('spectral-llm-report.md', 'utf8');
-              // Tronquer manuellement si nécessaire
+            let comment = '## 📋 Rapport de validation OpenAPI\n\n';
+            
+            // Priorité : rapport tronqué > rapport complet > message par défaut
+            if (fs.existsSync('spectral-report-truncated.md')) {
+              comment = fs.readFileSync('spectral-report-truncated.md', 'utf8');
+            } else if (fs.existsSync('spectral-report.md')) {
+              const fullReport = fs.readFileSync('spectral-report.md', 'utf8');
               if (fullReport.length > MAX_COMMENT_LENGTH) {
                 const truncated = fullReport.substring(0, MAX_COMMENT_LENGTH);
                 const lastNewline = truncated.lastIndexOf('\n');
                 comment = truncated.substring(0, lastNewline > 0 ? lastNewline : MAX_COMMENT_LENGTH);
-                comment += `\n\n---\n\n⚠️ **Rapport tronqué** (limite GitHub de ${MAX_COMMENT_LENGTH} caractères)\n\n📥 Consultez l'artefact \`spectral-llm-report\` pour le rapport complet.`;
+                comment += `\n\n---\n\n⚠️ **Rapport tronqué** (limite GitHub de ${MAX_COMMENT_LENGTH} caractères)\n\n📥 Consultez l'artefact \`spectral-report\` pour le rapport complet.`;
               } else {
                 comment = fullReport;
-              }
-            } else if (fs.existsSync('spectral-llm-report.json')) {
-              const report = JSON.parse(fs.readFileSync('spectral-llm-report.json', 'utf8'));
-              if (report.length === 0) {
-                comment = '## ✅ Rapport de validation OpenAPI\n\n🎉 Aucune erreur détectée ! Votre spécification OpenAPI est conforme.';
-              } else {
-                comment += `**Total d'erreurs détectées :** ${report.length}\n\n`;
-                comment += '⚠️ Le rapport détaillé n\'a pas pu être formaté. Veuillez consulter les artifacts.';
               }
             } else {
               comment = '## ✅ Rapport de validation OpenAPI\n\n🎉 Aucune erreur détectée ! Votre spécification OpenAPI est conforme.';
             }
             
-            // S'assurer que le commentaire ne dépasse pas la limite GitHub (65536 caractères max, mais on limite à 3000)
+            // S'assurer que le commentaire ne dépasse pas la limite
             if (comment.length > MAX_COMMENT_LENGTH) {
               comment = comment.substring(0, MAX_COMMENT_LENGTH);
               const lastNewline = comment.lastIndexOf('\n');
               comment = comment.substring(0, lastNewline > 0 ? lastNewline : MAX_COMMENT_LENGTH);
-              comment += `\n\n---\n\n⚠️ **Rapport tronqué** (limite de ${MAX_COMMENT_LENGTH} caractères)\n\n📥 Consultez l'artefact \`spectral-llm-report\` pour le rapport complet.`;
+              comment += `\n\n---\n\n⚠️ **Rapport tronqué** (limite de ${MAX_COMMENT_LENGTH} caractères)\n\n📥 Consultez l'artefact \`spectral-report\` pour le rapport complet.`;
+            }
+            
+            // Ajouter un lien vers le workflow LLM optionnel
+            if (!comment.includes('🎉 Aucune erreur')) {
+              comment += `\n\n---\n\n💡 **Besoin d'explications détaillées ?** Utilisez le workflow \`Generate LLM Feedback\` pour obtenir des explications et corrections proposées par IA.`;
             }
             
             // Chercher un commentaire existant
@@ -228,13 +193,12 @@ jobs:
               issue_number: context.issue.number,
             });
             
-            const botComment = comments.find(comment => 
-              comment.user.type === 'Bot' && 
-              comment.body.includes('Rapport de validation OpenAPI')
+            const botComment = comments.find(c => 
+              c.user.type === 'Bot' && 
+              c.body.includes('Rapport de validation OpenAPI')
             );
             
             if (botComment) {
-              // Mettre à jour le commentaire existant
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -242,7 +206,6 @@ jobs:
                 body: comment
               });
             } else {
-              // Créer un nouveau commentaire
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -256,17 +219,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: spectral-report
-          path: spectral-report.json
-          retention-days: 30
-
-      - name: 📤 Upload LLM report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: spectral-llm-report
           path: |
-            spectral-llm-report.json
-            spectral-llm-report.md
-            spectral-llm-report-truncated.md
+            spectral-report.json
+            spectral-report.md
+            spectral-report-truncated.md
           retention-days: 30
 
