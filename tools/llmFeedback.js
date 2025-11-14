@@ -16,9 +16,19 @@ async function generateLLMFeedback() {
   }
 
   const report = JSON.parse(fs.readFileSync(reportPath, "utf8"));
+  
+  // Filtrer les erreurs par sévérité : ne garder que error (0) et warn (1)
+  // Exclure info (2) et hint (3)
+  const filteredReport = report.filter((issue) => {
+    const severity = issue.severity ?? 0;
+    return severity <= 1; // 0 = error, 1 = warn
+  });
+
+  console.log(`📊 ${report.length} problème(s) détecté(s), ${filteredReport.length} à traiter (erreurs et avertissements uniquement)\n`);
+
   const explanations = [];
 
-  for (const issue of report) {
+  for (const issue of filteredReport) {
     const prompt = `
     Voici une erreur Spectral détectée lors de la validation d'une spec OpenAPI.
     Explique le problème en termes simples et propose une correction :
