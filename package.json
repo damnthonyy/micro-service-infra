@@ -9,6 +9,7 @@
   },
   "scripts": {
     "lint:openapi": "spectral lint openapi.yaml -f json -o spectral-report.json",
-    "lint:llm": "node tools/llmFeedback.js"
+    "lint:llm": "node tools/llmFeedback.js",
+    "format:spectral": "node tools/formatSpectralReport.js"
   }
 }
