@@ -1,0 +1,548 @@
+[
+  {
+    "code": "operation-tag-defined",
+    "message": "Operation tags must be defined in global tags.",
+    "path": [
+      "paths",
+      "/orders",
+      "post",
+      "tags",
+      "0"
+    ],
+    "explanation": "L'erreur que vous avez rencontrée concerne les \"tags\" dans votre spécification OpenAPI. Voici une explication simple et une proposition de correction :\n\n### Explication du problème :\n\nDans OpenAPI, les \"tags\" sont utilisés pour organiser et regrouper des opérations API. L'erreur indique que vous avez un tag dans votre opération `POST /orders` qui n'est pas défini dans la section des tags globaux. Cela signifie que le tag que vous avez utilisé pour cette opération doit d'abord être spécifié au niveau global (ou au début de votre document OpenAPI) pour être reconnu.\n\n### Correction proposée :\n\n1. Ouvrez votre spécification OpenAPI.\n2. Allez à la section des tags (généralement placée en haut du document).\n3. Ajoutez le tag qui est utilisé dans l'opération `POST /orders` (qui est référencé par `paths./orders.post.tags.0`).\n\nPar exemple, si votre tag utilisé dans l'opération `POST /orders` est `\"orders\"`, vous devez vous assurer d'avoir une section de tags définie comme suit :\n\n```yaml\ntags:\n  - name: orders\n    description: \"Operations related to orders\"\n```\n\nPuis, assurez-vous que l'opération `POST /orders` dans la section des chemins utilise bien ce tag :\n\n```yaml\npaths:\n  /orders:\n    post:\n      tags:\n        - orders   # Cela doit correspondre à un tag défini globalement\n      summary: \"Create a new order\"\n      ...\n```\n\nEn résumé, ajoutez le tag manquant à la section globale des tags pour résoudre l'erreur."
+  },
+  {
+    "code": "operation-tag-defined",
+    "message": "Operation tags must be defined in global tags.",
+    "path": [
+      "paths",
+      "/orders/{id}",
+      "get",
+      "tags",
+      "0"
+    ],
+    "explanation": "L'erreur que vous rencontrez, `operation-tag-defined`, signifie qu'il y a une opération (dans ce cas, une requête GET sur le chemin `/orders/{id}`) qui utilise une étiquette (ou \"tag\") pour organiser vos endpoints, mais cette étiquette n'est pas définie dans la section globale des tags de votre spécification OpenAPI.\n\n### Explication en termes simples :\nDans une spécification OpenAPI, les tags sont utilisés pour regrouper des opérations similaires afin de rendre la documentation plus claire et organisée. Si vous utilisez un tag dans une opération, vous devez vous assurer que ce tag est également défini dans la section des tags au niveau global. Si ce n'est pas le cas, cela crée une incohérence et l'outil de validation ne pourra pas comprendre ou afficher correctement votre API.\n\n### Correction :\nPour corriger cette erreur, vous devez faire deux choses :\n1. Vérifiez le tag utilisé dans la requête GET sur le chemin `/orders/{id}`. Prenons par exemple que le tag utilisé est `\"Order\"`.\n2. Assurez-vous que ce tag est défini dans la section globale des tags de votre spécification OpenAPI.\n\nVoici un exemple de ce à quoi cela pourrait ressembler :\n\n```yaml\nopenapi: 3.0.0\ninfo:\n  title: API Example\n  version: 1.0.0\npaths:\n  /orders/{id}:\n    get:\n      tags:\n        - Order  # Assurez-vous que ce tag est défini dans la section des tags\n      summary: Get order by ID\n      parameters:\n        - name: id\n          in: path\n          required: true\n          schema:\n            type: string\n      responses:\n        '200':\n          description: Order found\n\ntags:\n  - name: Order  # Définir le tag ici\n    description: Operations related to orders\n```\n\nDans cet exemple, le tag `Order` est utilisé dans l'opération GET, et il est également défini dans la section `tags`. Cela devrait résoudre l'erreur de validation. Assurez-vous simplement d'ajuster le nom du tag pour qu'il corresponde à ce que vous utilisez dans votre opération."
+  },
+  {
+    "code": "operation-tag-defined",
+    "message": "Operation tags must be defined in global tags.",
+    "path": [
+      "paths",
+      "/orders/{id}/cancel",
+      "post",
+      "tags",
+      "0"
+    ],
+    "explanation": "L'erreur que vous rencontrez, identifiée par la règle \"operation-tag-defined\", signifie qu'un tag utilisé dans une opération de votre spécification OpenAPI n'est pas défini dans la section globale des tags de votre document.\n\nDans votre cas, l'erreur provient de l'opération POST définie sur le chemin `/orders/{id}/cancel`, où le tag utilisé (tags.0) n'est pas reconnu parce qu'il n'est pas listé dans la section des tags au niveau global de la spécification OpenAPI.\n\n**En termes simples :**\nVous avez utilisé un tag pour décrire votre opération de cancellation d'une commande, mais vous n'avez pas dit à OpenAPI ce qu'est ce tag en le définissant ailleurs dans votre document.\n\n**Pour corriger cela :**\n1. Recherchez le tag que vous utilisez pour l'opération `/orders/{id}/cancel`.\n2. Allez dans la section `tags` de votre spécification OpenAPI (généralement située au début du fichier).\n3. Assurez-vous de définir ce tag avec au moins un nom, et si nécessaire, ajoutez une description. Par exemple :\n\n```yaml\ntags:\n  - name: cancelOrder\n    description: Opérations pour annuler des commandes\n```\n\n4. Une fois que vous avez défini le tag, vérifiez que l'opération `/orders/{id}/cancel` utilise le même nom pour ce tag.\n\nCela devraient résoudre l'erreur et permettre à la validation de passer."
+  },
+  {
+    "code": "operation-tag-defined",
+    "message": "Operation tags must be defined in global tags.",
+    "path": [
+      "paths",
+      "/orders/user_orders/{userId}",
+      "get",
+      "tags",
+      "0"
+    ],
+    "explanation": "L'erreur que tu vois, \"operation-tag-defined\", signifie qu'il y a un problème avec les tags que tu as utilisés pour une opération spécifique dans ton document OpenAPI.\n\nEn termes simples :\n\n1. **Tags** : Ce sont des mots-clés que tu utilises pour organiser et catégoriser les opérations de ton API. Par exemple, tu pourrais avoir des tags comme \"Utilisateurs\", \"Commandes\", etc.\n  \n2. **Erreur** : Dans le chemin spécifié (`/orders/user_orders/{userId}.get`), il y a un tag qui a été utilisé (indiqué par `tags.0`) qui n'est pas défini dans la section globale des tags du document OpenAPI. Cela signifie que tu fais référence à un tag qui n'a pas été déclaré.\n\n### Correction\n\nPour corriger ce problème, tu dois faire deux choses :\n\n1. Vérifie le tag utilisé dans la requête GET pour `/orders/user_orders/{userId}`. Note le nom de ce tag.\n  \n2. Assure-toi que ce tag est défini dans la section `tags` globale de ton document OpenAPI. Si ce n'est pas le cas, tu devras l'ajouter. Cela ressemblerait à ceci :\n\n```yaml\ntags:\n  - name: <NomDeTonTag>\n    description: <Description de ton tag>\n```\n\n### Étapes pratiques :\n\n- Si le tag utilisé dans la requête est par exemple \"Commandes\", assure-toi que tu as quelque chose comme ceci dans la section des tags :\n\n```yaml\ntags:\n  - name: Commandes\n    description: Opérations liées aux commandes des utilisateurs\n```\n\n- Si le tag n'existe pas, tu devrais le créer et lui donner une description appropriée.\n\nUne fois que tu as ajouté ou corrigé le tag, ton fichier OpenAPI devrait être valide et tu ne devrais plus voir cette erreur."
+  },
+  {
+    "code": "operation-tag-defined",
+    "message": "Operation tags must be defined in global tags.",
+    "path": [
+      "paths",
+      "/products/{id}",
+      "delete",
+      "tags",
+      "0"
+    ],
+    "explanation": "L'erreur que vous avez rencontrée fait référence à une règle de validation d'une spécification OpenAPI, plus précisément à la règle `operation-tag-defined`. Voici une explication simple de ce problème et comment le corriger :\n\n### Explication du problème :\nDans votre spécification OpenAPI, chaque opération (comme une méthode DELETE, GET, etc.) peut être associée à des \"tags\". Ces tags aident à organiser et à classifier les opérations dans votre API. Cependant, pour chaque tag utilisé dans une opération, il doit exister une définition de ce tag dans la section globale des tags de la spécification.\n\nDans votre cas, l'erreur indique que vous utilisez un tag pour l'opération `DELETE` de l'endpoint `/products/{id}` qui n'est pas défini dans la section globale des tags. Par conséquent, la validation échoue.\n\n### Correction du problème :\nPour résoudre ce problème, vous devez vous assurer que le tag que vous utilisez existe bien dans la section `tags` de votre spécification OpenAPI. Voici comment procéder :\n\n1. **Identifier le tag utilisé** : Vous devez vérifier quel est le tag utilisé dans l'opération `DELETE` pour le chemin `/products/{id}`. Dans le message d'erreur, il est mentionné comme `tags.0`, donc c'est le premier tag de la liste.\n\n2. **Définir le tag dans la section des tags** : Allez dans la section `tags` de votre spécification OpenAPI et ajoutez une définition pour ce tag si ce n'est pas déjà fait. Par exemple, si le tag est `\"product\"`, vous devez l'ajouter comme suit :\n\n```yaml\ntags:\n  - name: product\n    description: Opérations liées aux produits\n```\n\n3. **Vérifier** : Une fois que vous avez ajouté le tag dans la section `tags`, relisez la spécification pour vous assurer que tout est en ordre et effectuez à nouveau la validation.\n\n### Exemple corrigé :\nVoici un exemple de ce à quoi cela pourrait ressembler dans votre spécification OpenAPI :\n\n```yaml\nopenapi: 3.0.0\ninfo:\n  title: Mon API\n  version: 1.0.0\n\ntags:\n  - name: product\n    description: Opérations liées aux produits\n\npaths:\n  /products/{id}:\n    delete:\n      tags:\n        - product\n      summary: Supprimer un produit\n      parameters:\n        - name: id\n          in: path\n          required: true\n          description: ID du produit à supprimer\n          schema:\n            type: string\n      responses:\n        '204':\n          description: Produit supprimé avec succès\n```\n\nEn suivant ces étapes, votre erreur devrait être corrigée et la validation de la spécification OpenAPI devrait passer avec succès."
+  },
+  {
+    "code": "operation-tag-defined",
+    "message": "Operation tags must be defined in global tags.",
+    "path": [
+      "paths",
+      "/products/{id}",
+      "get",
+      "tags",
+      "0"
+    ],
+    "explanation": "L'erreur \"operation-tag-defined\" signifie qu'une ou plusieurs balises (tags) que vous utilisez dans votre opération OpenAPI (dans ce cas, l'opération GET pour le chemin `/products/{id}`) ne sont pas définies dans la section globale des balises de votre spécification OpenAPI.\n\n**Explication simple du problème :**\nLes balises (tags) sont utilisées dans OpenAPI pour regrouper et organiser les opérations de votre API. Si vous utilisez une balise dans une opération mais que cette balise n'est pas définie dans la section des balises globales, cela pose problème. Cela signifie que lorsque quelqu'un consulte votre documentation ou utilise votre API, il ne trouvera pas d'informations sur cette balise, ce qui peut créer de la confusion.\n\n**Comment corriger le problème :**\n1. Trouvez la balise mentionnée dans l'erreur (`tags.0` pour l'opération GET sur `/products/{id}`).\n2. Accédez à la section des balises globales dans votre spécification OpenAPI (généralement sous la clé `tags`).\n3. Ajoutez la balise utilisée dans l'opération à cette section si elle n'y est pas déjà.\n\nVoici un exemple de correction :\n\n### Si la balise utilisée est par exemple \"Produits\":\n**Mise à jour de la section `tags`:**\n```yaml\ntags:\n  - name: Produits\n    description: Toutes les opérations liées aux produits.\n```\n\n### Mise à jour de l'opération :\nAssurez-vous que l'opération utilise la balise correctement :\n```yaml\npaths:\n  /products/{id}:\n    get:\n      tags:\n        - Produits  # Assurez-vous que cette balise correspond à celle ajoutée dans la section précédente\n      summary: Récupérer un produit par ID\n      ...\n```\n\nUne fois la balise correcte ajoutée dans la section globale, l'erreur devrait disparaître."
+  },
+  {
+    "code": "operation-tag-defined",
+    "message": "Operation tags must be defined in global tags.",
+    "path": [
+      "paths",
+      "/products/{id}",
+      "put",
+      "tags",
+      "0"
+    ],
+    "explanation": "Le message d'erreur que vous voyez indique que dans votre spécification OpenAPI, vous avez utilisé un tag pour une opération (dans ce cas, une opération PUT sur le chemin `/products/{id}`) qui n'est pas défini dans la section globale des tags.\n\n### Explication simple :\nUne spécification OpenAPI permet d'organiser les différentes opérations (comme GET, POST, PUT, etc.) en utilisant des \"tags\" pour les regrouper et les documenter. Chaque tag doit être défini dans une liste de tags globaux au début de la spécification. Si vous faites référence à un tag dans une opération alors que ce tag n'est pas défini au niveau global, cela entraîne une erreur.\n\n### Correction :\n1. **Déterminer le tag utilisé** : Vérifiez le tag utilisé pour l'opération PUT sur `/products/{id}`.\n2. **Définir le tag dans la section globale** : Ajoutez ce tag dans la section `tags` de votre spécification OpenAPI.\n\n#### Exemple de correction :\nSi, par exemple, vous avez utilisé le tag `\"products\"` pour l'opération PUT, vous devez vous assurer que vous avez une section qui le définisse comme suit :\n\n```yaml\ntags:\n  - name: products\n    description: Operations related to products\n```\n\nEt voici comment cela devrait apparaître dans l'opération :\n\n```yaml\npaths:\n  /products/{id}:\n    put:\n      tags:\n        - products\n      summary: Update a product\n      ...\n```\n\nAssurez-vous que le tag mentionné dans l'opération PUT est bien présent dans la section `tags` pour respecter la règle de validation."
+  },
+  {
+    "code": "operation-tag-defined",
+    "message": "Operation tags must be defined in global tags.",
+    "path": [
+      "paths",
+      "/products/createProduct",
+      "post",
+      "tags",
+      "0"
+    ],
+    "explanation": "L'erreur que vous rencontrez est liée à une spécification OpenAPI, qui est un format utilisé pour décrire les API REST. Voici un décryptage simple de l'erreur :\n\n### Explication du Problème\n\n- **Règle** : `operation-tag-defined` signifie que toutes les \"tags\" (étiquettes) utilisées pour une opération (comme un point d'API) doivent avoir été définies au niveau global dans la section des tags de la spécification OpenAPI.\n- **Message** : \"Operation tags must be defined in global tags\" indique que la ou les étiquettes spécifiées pour l'opération (dans votre cas, la méthode POST pour le chemin `/products/createProduct`) doivent être répertoriées dans la section des tags globaux.\n- **Chemin** : `paths./products/createProduct.post.tags.0` précise que l'erreur se trouve dans la première tag de l'opération POST pour le chemin donné.\n\n### Correction Proposée\n\nPour corriger cette erreur, vous devez vous assurer que la tag utilisée dans votre opération POST est également définie dans la section des tags de votre spécification OpenAPI. Voici comment procéder :\n\n1. **Identifier la tag utilisée** : Regardez dans votre spécification à la ligne indiquée (`paths./products/createProduct.post.tags.0`) pour voir quelle tag a été utilisée. Par exemple, si vous avez une tag appelée `\"Product\"`.\n\n2. **Définir la tag dans la section des tags globaux** : Ensuite, assurez-vous que cette tag est présente dans la section `tags` de votre spécification OpenAPI. Voici un exemple de ce à quoi cela pourrait ressembler :\n\n```yaml\ntags:\n  - name: Product\n    description: Opérations liées aux produits\n```\n\n3. **Vérifier votre opération** : Une fois que vous avez ajouté la tag dans la section globale, votre partie d'opération doit ressembler à ceci :\n\n```yaml\npaths:\n  /products/createProduct:\n    post:\n      tags:\n        - Product\n      summary: Créer un produit\n      # autres détails de l'opération\n```\n\nEn suivant ces étapes et en vous assurant que toutes les tags utilisées dans vos opérations sont définies dans la section des tags, l'erreur devrait être corrigée."
+  },
+  {
+    "code": "path-kebab-case",
+    "message": "Paths must be in kebab-case",
+    "path": [
+      "paths",
+      "/"
+    ],
+    "explanation": "L'erreur que vous rencontrez est liée à la manière dont les chemins d'API sont nommés dans votre spécification OpenAPI. La règle `path-kebab-case` stipule que tous les chemins doivent être écrits en \"kebab-case\". Cela signifie que les noms des chemins doivent être en minuscules et les mots doivent être séparés par des tirets (`-`).\n\nDans votre cas, le chemin `/` (qui est probablement votre point d'entrée racine) ne respecte pas cette règle, car il ne contient pas de mots pour appliquer le format kebab-case. Toutefois, ce chemin en lui-même est valide comme racine.\n\n### Problème\n- Le chemin spécifié est tout seul (`/`), et bien qu'il soit fonctionnel, ce n'est pas un nom de chemin en kebab-case qui pourrait être le cas pour des chemins plus spécifiques (par exemple, `/users` ou `/my-endpoint`).\n\n### Correction\nPour corriger ce problème, vous devrez vous assurer que tous les chemins qui contiennent des mots et ne sont pas juste des symboles comme `/` respectent la norme kebab-case. Par exemple, si vous aviez un chemin comme `/UserDetails`, vous le transformeriez en `/user-details`.\n\nVoici quelques suggestions de chemins valides :\n- Si vous avez un chemin actif comme `/Users`, changez-le en `/users`.\n- Pour des chemins plus spécifiques, utilisez le format kebab-case, comme `/get-user-info` ou `/create-new-user`.\n\nSi vous n’avez pas d’autre chemin à déclarer et que `/` est le seul, il peut être acceptable, mais pour des spécifications qui contiennent des chemins supplémentaires, assurez-vous qu'ils respectent la convention kebab-case.\n\n### Exemple après correction :\n```yaml\npaths:\n  /users:\n    get:\n      summary: \"Récupérer la liste des utilisateurs\"\n      ...\n``` \n\nCela ensure que vos chemins respectent les règles de nommage kebab-case et sont conformes aux attentes de validation de la spécification OpenAPI."
+  },
+  {
+    "code": "operation-security-defined",
+    "message": "Operations should define security requirements",
+    "path": [
+      "paths",
+      "/",
+      "get"
+    ],
+    "explanation": "La règle \"operation-security-defined\" signifie que chaque opération (ou méthode) d'un chemin dans votre spécification OpenAPI doit préciser les exigences de sécurité. Cela est nécessaire pour indiquer comment l'accès à cette opération est protégé (par exemple, par un jeton OAuth, une clé d'API, etc.).\n\nDans votre cas, l'erreur est signalée pour l'opération GET à la racine du chemin (paths./.get). Cela indique que cette opération ne spécifie pas de méthode de sécurité.\n\n### Correction\n\nPour corriger cette erreur, vous devez définir une ou plusieurs exigences de sécurité pour l'opération GET. Voici un exemple de la manière dont vous pourriez le faire :\n\n```yaml\npaths:\n  /:\n    get:\n      security:\n        - apiKey: []  # Utiliser une clé d'API pour cette opération\n      summary: \"Description de votre opération GET\"\n      responses:\n        '200':\n          description: \"Succès\"\n```\n\nDans cet exemple, nous avons ajouté une section \"security\" à l'opération GET. La valeur `apiKey: []` fait référence à une définition de sécurité que vous auriez préalablement configurée dans votre spécification (comme un objet \"apiKey\" dans la section des \"components/securitySchemes\"). Assurez-vous de remplacer cela par le type de sécurité que votre API utilise réellement. \n\nAinsi, en ajoutant une exigence de sécurité à l'opération GET, vous résolvez l'erreur de validation."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/",
+      "get",
+      "responses",
+      "200"
+    ],
+    "explanation": "L'erreur \"response-schema-required\" signifie que la réponse d'une requête GET sur le chemin spécifié dans votre spécification OpenAPI ne contient pas de schéma ou de contenu défini, ce qui est nécessaire pour décrire ce que le client peut attendre en réponse.\n\nEn termes simples, cela veut dire que lorsque quelqu'un effectue une requête GET à l'URL indiquée, il doit être clairement indiqué quel type de données (par exemple, un objet JSON) sera renvoyé par le serveur. Sans cette information, les utilisateurs de votre API ne sauraient pas à quoi s'attendre.\n\n### Correction proposée :\n\nPour résoudre ce problème, vous devez ajouter une définition de schéma ou de contenu pour la réponse 200 (succès) dans la section \"responses\" de la méthode GET. Voici un exemple simple de la manière dont vous pourriez le faire :\n\n```yaml\npaths:\n  /:\n    get:\n      responses:\n        '200':\n          description: Réponse réussie\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  message:\n                    type: string\n                  data:\n                    type: array\n                    items:\n                      type: object\n                      properties:\n                        id:\n                          type: integer\n                        name:\n                          type: string\n```\n\nDans cet exemple :\n\n- `description` fournit un texte qui explique ce que signifie le code de réponse 200.\n- `content` spécifie que la réponse sera en format JSON (`application/json`).\n- `schema` décrit la structure des données qui seront renvoyées par le serveur, incluant les types de données et les propriétés des objets.\n\nAssurez-vous de personnaliser le schéma selon les données que votre API doit retourner. Cela aidera les développeurs à mieux comprendre comment interagir avec votre API."
+  },
+  {
+    "code": "operation-tag-defined",
+    "message": "Operation tags must be defined in global tags.",
+    "path": [
+      "paths",
+      "/",
+      "get",
+      "tags",
+      "0"
+    ],
+    "explanation": "L'erreur que vous rencontrez est liée à l'utilisation des \"tags\" dans votre spécification OpenAPI. Voici la signification de cette erreur :\n\n### Problème :\nL'OpenAPI spécifie que pour qu'un \"tag\" soit valide dans une opération (dans ce cas, la méthode GET sur un certain chemin), ce tag doit être défini au niveau global dans la section des tags de votre spécification. Dans votre cas, un tag utilisé dans l'opération GET n'est pas défini dans la section globale des tags, ce qui déclenche l'erreur.\n\n### Correction :\nPour corriger cette erreur, vous devez vous assurer que le tag utilisé dans l'opération GET est également défini dans la section globale des tags de votre spécification OpenAPI. Voici comment vous pouvez le faire :\n\n1. **Vérifiez le tag utilisé** : Identifiez le tag que vous utilisez pour votre opération GET, par exemple, si votre tag est `\"exampleTag\"`.\n\n2. **Ajoutez le tag à la section globale** : Dans votre fichier de spécification OpenAPI, ajoutez une section `tags` si elle n'existe pas encore, ou ajoutez le tag manquant à cette section. Cela devrait ressembler à ceci :\n\n```yaml\nopenapi: 3.0.0\ninfo:\n  title: Mon API\n  version: 1.0.0\npaths:\n  /:\n    get:\n      tags:\n        - exampleTag  # Le tag utilisé ici\n      summary: Exemple de méthode GET\n      responses:\n        '200':\n          description: Succès\n\ntags:\n  - name: exampleTag  # Définition du tag ici\n    description: Description du tag exampleTag\n```\n\n### Résumé :\nAssurez-vous que chaque tag utilisé dans vos opérations est défini dans la section `tags` de votre spécification OpenAPI. Cela résoudra l'erreur et garantira la conformité de votre spécification."
+  },
+  {
+    "code": "operation-security-defined",
+    "message": "Operations should define security requirements",
+    "path": [
+      "paths",
+      "/users",
+      "get"
+    ],
+    "explanation": "L'erreur que vous voyez, \"operation-security-defined\", signifie que l'opération définie pour le chemin `/users` et la méthode `GET` n'a pas de spécification concernant la sécurité. En d'autres termes, l'API n'indique pas quelles sont les exigences de sécurité pour accéder à cette opération.\n\n### Problème :\n\nLorsqu'une opération de l'API est définie, il est important de spécifier comment les utilisateurs peuvent s'authentifier pour y accéder. Cela peut inclure des éléments tels que l'utilisation d'un token JWT, de l'authentification de base, ou d'autres mécanismes de sécurité. L'absence de cette définition peut mener à des insuffisances en matière de sécurité, car on ne sait pas si l'accès est restreint ou qui peut y accéder.\n\n### Correction :\n\nPour corriger cette erreur, vous devez ajouter une section `security` à votre opération `GET /users`. Voici un exemple de ce à quoi cela pourrait ressembler :\n\n```yaml\npaths:\n  /users:\n    get:\n      security:\n        - api_key: []  # ou une autre méthode d'authentification que vous utilisez\n      summary: Récupérer la liste des utilisateurs\n      responses:\n        '200':\n          description: La liste des utilisateurs\n          content:\n            application/json:\n              schema:\n                type: array\n                items:\n                  type: object\n```\n\nDans cet exemple, `api_key` est une méthode de sécurité que vous devrez avoir également définie dans la section `components.securitySchemes` de votre spécification OpenAPI. Voici un exemple de définition de celui-ci :\n\n```yaml\ncomponents:\n  securitySchemes:\n    api_key:\n      type: apiKey\n      in: header\n      name: X-API-KEY\n```\n\nEn ajoutant ces sections, vous vous assurez que les utilisateurs de votre API savent quelles sont les exigences de sécurité pour accéder à l'opération spécifiée."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/users",
+      "get",
+      "responses",
+      "200"
+    ],
+    "explanation": "L'erreur que vous avez rencontrée indique qu'une réponse pour l'endpoint `/users` (méthode GET) dans votre spécification OpenAPI n'a pas de schéma ou de contenu défini. Voici ce que cela signifie en termes simples :\n\n### Problème :\nLorsque vous définissez une API avec OpenAPI, chaque réponse de votre endpoint doit spécifier ce qu'elle renvoie. Cela inclut le type de données (ou le format) de la réponse, généralement défini par un schéma. Dans le cas présent, la réponse à une demande de récupération des utilisateurs (réponse 200) n'est pas clairement définie, ce qui rend difficile pour les développeurs et les outils d'interagir avec votre API.\n\n### Correction :\nPour corriger cette erreur, vous devez définir un schéma pour la réponse dans la section `responses` de votre spécification OpenAPI pour le endpoint `/users`. Voici un exemple de correction :\n\n```yaml\npaths:\n  /users:\n    get:\n      responses:\n        '200':\n          description: Liste des utilisateurs récupérée avec succès\n          content:\n            application/json:\n              schema:\n                type: array\n                items:\n                  type: object\n                  properties:\n                    id:\n                      type: integer\n                    name:\n                      type: string\n                    email:\n                      type: string\n```\n\n### Explication de la correction :\n1. **Description** : Ajout d'une description de la réponse pour donner plus de contexte.\n2. **Content** : Utilisation de la clé `content` pour indiquer le type de contenu renvoyé par l'API (dans ce cas, `application/json`).\n3. **Schema** : Définition d'un schéma qui indique que la réponse est un tableau d'objets. Chaque objet a des propriétés spécifiques (`id`, `name`, `email`), chacune avec un type de données défini.\n\nCette structure permettra aux utilisateurs de votre API de savoir exactement à quoi s'attendre lors d'une requête GET sur `/users`, résolvant ainsi l'erreur signalée."
+  },
+  {
+    "code": "operation-security-defined",
+    "message": "Operations should define security requirements",
+    "path": [
+      "paths",
+      "/users/{id}",
+      "get"
+    ],
+    "explanation": "L'erreur que vous rencontrez concerne la validation d'une spécification OpenAPI. Voici une explication simple du problème et une suggestion de correction :\n\n### Problème\n\nLa règle `operation-security-defined` signifie que toutes les opérations (dans ce cas, l'opération GET sur le chemin `/users/{id}`) doivent spécifier des exigences de sécurité. Cela signifie que vous devez indiquer quel type de sécurité est requis pour accéder à cette opération (comme une authentification par jeton, OAuth, etc.).\n\nLe message indique que l'opération en question ne définit pas de sécurité, ce qui pourrait permettre à n'importe qui d'accéder à cette ressource, ce qui n'est souvent pas souhaité dans les API.\n\n### Correction proposée\n\nPour corriger cette erreur, vous devez ajouter une section `security` à l'opération GET dans votre spécification OpenAPI. Voici un exemple de comment cela pourrait être fait :\n\n```yaml\npaths:\n  /users/{id}:\n    get:\n      summary: \"Obtenir les informations d'un utilisateur\"\n      parameters:\n        - name: id\n          in: path\n          required: true\n          schema:\n            type: string\n      security:\n        - api_key: []   # Ici, 'api_key' doit être défini dans la section des composants\n      responses:\n        '200':\n          description: \"Succès\"\n        '404':\n          description: \"Utilisateur non trouvé\"\ncomponents: \n  securitySchemes:\n    api_key:\n      type: apiKey\n      name: X-API-Key\n      in: header\n```\n\n### Explications de la correction\n\n1. **Ajout de la section `security`** : La ligne `security: - api_key: []` indique que cette opération nécessite un mécanisme de sécurité défini, ici un `api_key`.\n2. **Définition dans les composants** : La section `securitySchemes` à la fin permet de définir le type de sécurité utilisé (ici, une clé API doit être fournie dans l'en-tête de la requête).\n\nEn ajoutant cela, vous indiquez clairement les exigences de sécurité pour cette opération et vous vous conformez ainsi à la règle de validation."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/users/{id}",
+      "get",
+      "responses",
+      "200"
+    ],
+    "explanation": "L'erreur que vous rencontrez, identifiée par la règle `response-schema-required`, signifie que la spécification OpenAPI pour l'endpoint (point de terminaison) `GET /users/{id}` nécessite une définition du schéma de réponse pour le code de statut 200. En d'autres termes, lorsque cette route est appelée avec succès, il est attendu de fournir des détails sur la structure de la réponse, mais cela n'a pas été fait.\n\n### Explication simple du problème :\nLorsqu'un client envoie une requête à l'endpoint `GET /users/{id}`, il attend une réponse. Pour que cette réponse soit bien comprise et correctement utilisée, il est nécessaire de spécifier ce à quoi les données de la réponse doivent ressembler (cette spécification est appelée un \"schéma\"). Si vous ne définissez pas ce schéma, cela crée de l'incertitude pour les développeurs qui utilisent votre API, car ils ne sauront pas quelles informations ils recevront.\n\n### Correction à apporter :\nPour corriger cette erreur, vous devez ajouter un schéma à la réponse pour le code 200 dans votre spécification OpenAPI. Voici un exemple de ce à quoi cela pourrait ressembler :\n\n```yaml\npaths:\n  /users/{id}:\n    get:\n      summary: Récupérer un utilisateur par son ID\n      parameters:\n        - name: id\n          in: path\n          required: true\n          description: L'ID de l'utilisateur à récupérer\n          schema:\n            type: string\n      responses:\n        '200':\n          description: Un utilisateur a été trouvé\n          schema:\n            type: object\n            properties:\n              id:\n                type: string\n              name:\n                type: string\n              email:\n                type: string\n```\n\n### Ce que vous devez faire :\n1. Ajoutez une section `schema` sous `responses.200` pour définir la structure des données qui seront renvoyées par l'API.\n2. Définissez les propriétés de l'objet retourné (par exemple, `id`, `name`, `email`, etc.).\n\nCela garantira que les utilisateurs de votre API savent exactement à quoi s'attendre lorsqu'ils effectuent une requête à cet endpoint."
+  },
+  {
+    "code": "operation-security-defined",
+    "message": "Operations should define security requirements",
+    "path": [
+      "paths",
+      "/products",
+      "get"
+    ],
+    "explanation": "L'erreur \"operation-security-defined\" signifie que l'opération spécifiée (dans ce cas, la méthode GET pour le chemin `/products`) n'a pas de paramètres de sécurité définis. Cela peut poser problème, car cela indique que cette opération n'exige pas d'authentification ou d'autorisation, ce qui pourrait ne pas être sécurisé.\n\n### Problème en termes simples\nLorsqu'une API nécessite une certaine forme de sécurité (comme une clé API, un jeton JWT, etc.) pour accéder à ses opérations, les spécifications OpenAPI doivent clairement indiquer ces exigences. Dans ton cas, la méthode GET pour récupérer les produits ne mentionne aucune sécurité, ce qui peut poser des risques si cette opération devrait être restreinte aux utilisateurs authentifiés.\n\n### Proposition de correction\nPour corriger cette erreur, tu dois définir des exigences de sécurité pour l'opération GET sur `/products`. Voici un exemple de ce à quoi cela pourrait ressembler dans une spécification OpenAPI :\n\n```yaml\npaths:\n  /products:\n    get:\n      security:\n        - apiKey: [] # Exemple d'utilisation d'une clé API\n      summary: Récupérer la liste des produits\n      responses:\n        '200':\n          description: Liste des produits\n```\n\n### Remarques\n1. **Définir le schéma de sécurité** : Avant tout, il faut s'assurer que le schéma de sécurité est défini dans la section `components` de ta spécification OpenAPI, comme ceci :\n\n```yaml\ncomponents:\n  securitySchemes:\n    apiKey:\n      type: apiKey\n      in: header\n      name: X-API-Key\n```\n\n2. **Configurer d'autres types de sécurité** : Si tu utilises un autre mécanisme (comme OAuth2 ou un système basé sur des jetons), il faudrait le spécifier en conséquence.\n\nUne fois ces modifications apportées, la validation OpenAPI devrait passer sans erreur concernant la sécurité."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/products",
+      "get",
+      "responses",
+      "500"
+    ],
+    "explanation": "L'erreur \"response-schema-required\" indique qu'il y a un problème avec la définition de la réponse dans votre spécification OpenAPI pour la méthode GET sur le chemin `/products`. Plus précisément, il s'agit de la réponse renvoyée en cas d'erreur, spécifiée par le code de statut HTTP 500.\n\n### Problème :\nLa spécification OpenAPI exige que chaque réponse ait un schéma ou un contenu associé, surtout pour les codes d'erreur. Cela permet aux développeurs utilisant votre API de comprendre la structure des données attendues en cas d'erreur. Dans ce cas, votre réponse est définie pour le code 500, mais elle ne spécifie pas de schéma ni de contenu. Cela empêche la validation de la spécification.\n\n### Correction Proposée :\nPour corriger ce problème, vous devez ajouter un schéma ou du contenu à la réponse 500. Voici un petit exemple de ce que cela pourrait donner :\n\n```yaml\npaths:\n  /products:\n    get:\n      responses:\n        '500':\n          description: Erreur interne du serveur\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  message:\n                    type: string\n                    example: \"Une erreur interne est survenue.\"\n```\n\n### Explication de la Correction :\n- **description** : Fournit un message qui décrit ce que signifie la réponse 500.\n- **content** : Indique le type de contenu retourné (dans ce cas, `application/json`).\n- **schema** : Définit la structure de la réponse en cas d'erreur 500. Ici, on spécifie que la réponse sera un objet contenant un champ `message`, qui est une chaîne de caractères décrivant l'erreur.\n\nEn ajoutant ces éléments, vous permettez aux utilisateurs de votre API de savoir à quoi s'attendre lorsqu'une erreur interne se produit et garantissez que votre spécification respecte les règles OpenAPI."
+  },
+  {
+    "code": "operation-tag-defined",
+    "message": "Operation tags must be defined in global tags.",
+    "path": [
+      "paths",
+      "/products",
+      "get",
+      "tags",
+      "0"
+    ],
+    "explanation": "L'erreur que vous rencontrez indique que dans votre spécification OpenAPI, vous avez utilisé un \"tag\" pour l'opération GET sur le chemin `/products`, mais ce tag n'est pas défini dans la section globale des tags de votre documentation.\n\n### Explication en termes simples :\nDans OpenAPI, les \"tags\" sont utilisés pour regrouper et décrire les opérations. Pour chaque opération (comme une requête GET, POST, etc.), vous pouvez assigner un ou plusieurs tags. Cependant, chaque tag utilisé doit être défini au préalable dans une section dédiée de la spécification, qui se trouve généralement au début du fichier OpenAPI.\n\n### Correction proposée :\n1. **Vérifiez le tag utilisé** : Identifiez quel tag vous avez utilisé pour l'opération GET sur `/products`. Par exemple, s'il s'agit de \"Produits\", assurez-vous que ce tag est bien défini.\n\n2. **Ajoutez le tag dans la section globale** : Si le tag n'est pas défini, ajoutez-le dans la section \"tags\" de votre fichier OpenAPI. Cela devrait ressembler à ceci :\n\n```yaml\ntags:\n  - name: Produits\n    description: Opérations liées aux produits\n```\n\n3. **Assurez-vous de la cohérence** : Une fois le tag ajouté, assurez-vous qu'il correspond exactement à celui utilisé dans le chemin (y compris les majuscules/minuscules et tout espace).\n\nVoici un exemple de ce à quoi cela pourrait ressembler dans votre spécification OpenAPI :\n\n```yaml\nopenapi: 3.0.0\ninfo:\n  title: Mon API\n  version: 1.0.0\ntags:\n  - name: Produits\n    description: Opérations liées aux produits\npaths:\n  /products:\n    get:\n      tags:\n        - Produits\n      summary: Récupérer la liste des produits\n      responses:\n        '200':\n          description: Liste des produits récupérée avec succès\n```\n\nEn résumé, il vous suffit de vous assurer que tous les tags utilisés pour les opérations sont bien définis dans la liste des tags globaux. Cela supprimera l'erreur et garantira que votre spécification OpenAPI est conforme."
+  },
+  {
+    "code": "operation-description",
+    "message": "Each operation must have a description",
+    "path": [
+      "paths",
+      "/products/{id}",
+      "get"
+    ],
+    "explanation": "L'erreur \"operation-description\" indique que dans votre spécification OpenAPI, chaque opération (comme une requête GET, POST, etc.) doit avoir une description. Cela permet à quiconque consulte l'API de comprendre ce que fait cette opération sans avoir à plonger dans le code.\n\nDans votre cas, l'erreur concerne la méthode GET sur le chemin `\"/products/{id}\"`. Cela signifie que lorsque quelqu'un essaie de récupérer un produit en utilisant son identifiant, la documentation ne contient pas d'explication sur ce que fait cette opération.\n\n### Correction à apporter :\n\nPour corriger ce problème, il suffit d'ajouter une description à l'opération GET. Par exemple :\n\n```yaml\npaths:\n  /products/{id}:\n    get:\n      summary: \"Obtenir les détails d'un produit\"\n      description: \"Cette opération permet de récupérer les détails d'un produit en utilisant son identifiant unique.\"\n      parameters:\n        - name: id\n          in: path\n          required: true\n          description: \"L'identifiant unique du produit\"\n          schema:\n            type: string\n      responses:\n        '200':\n          description: \"Détails du produit récupérés avec succès\"\n        '404':\n          description: \"Produit non trouvé\"\n```\n\n### Résumé :\n\nAjoutez une description sous l'opération GET pour expliquer ce qu'elle fait. Cela contribuera grandement à améliorer la compréhension de votre API par ses utilisateurs."
+  },
+  {
+    "code": "operation-security-defined",
+    "message": "Operations should define security requirements",
+    "path": [
+      "paths",
+      "/products/{id}",
+      "get"
+    ],
+    "explanation": "L'erreur que vous rencontrez avec la règle `operation-security-defined` signifie que l'opération spécifiée (dans ce cas, la méthode GET pour le chemin `/products/{id}`) ne définit pas les exigences de sécurité nécessaires. Cela se produit généralement lorsque vous n'avez pas indiqué les schémas d'authentification ou d'autorisation que les utilisateurs doivent respecter pour accéder à cette opération.\n\n### Problème en termes simples :\nLorsque vous essayez d'obtenir des informations sur un produit en utilisant l'URL `/products/{id}`, l'API ne spécifie pas comment les utilisateurs doivent s'authentifier ou quels autorisations sont nécessaires. Cela pose un problème de sécurité, car il n'est pas clair si cette opération est accessible à tout le monde, ou si elle nécessite un certain niveau d'accès.\n\n### Correction proposée :\nPour corriger ce problème, vous devez ajouter une section `security` à la définition de l'opération GET. Vous devez spécifier les schémas de sécurité que vous souhaitez utiliser. Par exemple, si vous avez une authentification basée sur un token JWT, cela pourrait ressembler à ceci :\n\n```yaml\npaths:\n  /products/{id}:\n    get:\n      security:\n        - BearerAuth: []  # Utilisation d'un token Bearer\n      summary: \"Obtenir un produit par ID\"\n      parameters:\n        - name: id\n          in: path\n          required: true\n          description: \"L'ID du produit à récupérer\"\n          schema:\n            type: string\n      responses:\n        '200':\n          description: \"Produit récupéré avec succès\"\n          content:\n            application/json:\n              schema:\n                $ref: '#/components/schemas/Product'\ncomponents:\n  securitySchemes:\n    BearerAuth:\n      type: http\n      scheme: bearer\n```\n\nDans cet exemple :\n- Nous avons ajouté une section `security` qui indique que l'authentification doit se faire via un token Bearer.\n- Nous avons également défini le schéma de sécurité `BearerAuth` dans la section `components.securitySchemes`.\n\nCette modification clarifie comment les utilisateurs doivent s'authentifier pour effectuer la requête et conformément aux exigences de sécurité."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/products/{id}",
+      "get",
+      "responses",
+      "200"
+    ],
+    "explanation": "L’erreur que vous rencontrez est liée à votre spécification OpenAPI, plus précisément à la réponse que votre API doit renvoyer lors d'une requête GET à l’endpoint `/products/{id}`.\n\n### Problème\n\nLe message d'erreur \"Response must have a schema or content defined\" signifie que la réponse de votre API pour le code de statut 200 (qui indique que la requête a réussi) n'a pas de schéma ou de contenu défini. Cela signifie que la spécification ne décrit pas clairement le format des données que l’API va renvoyer en réponse à cette requête.\n\n### Correction\n\nPour corriger ce problème, vous devez ajouter une définition de schéma ou de contenu pour la réponse 200 dans votre spécification. Voici un exemple de ce à quoi cela pourrait ressembler :\n\n```yaml\npaths:\n  /products/{id}:\n    get:\n      summary: \"Obtenir un produit par ID\"\n      parameters:\n        - name: id\n          in: path\n          required: true\n          description: \"L'ID du produit à récupérer\"\n          schema:\n            type: string\n      responses:\n        '200':\n          description: \"Produit récupéré avec succès\"\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  id:\n                    type: string\n                  name:\n                    type: string\n                  price:\n                    type: number\n                    format: float\n                  description:\n                    type: string\n```\n\n### Explications supplémentaires\n\n- **content** : Ici, nous précisons que le type de contenu de la réponse est `application/json`.\n- **schema** : Nous définissons un schéma qui décrit les champs qui seront présents dans la réponse, tels que `id`, `name`, `price`, et `description`. Cela permet de comprendre ce que le client peut attendre comme réponse.\n\nEn ajoutant cette structure à votre spécification, vous vous assurez que la réponse à la requête GET est bien définie et que les outils de validation ne signalent plus d'erreurs pour ce chemin."
+  },
+  {
+    "code": "operation-security-defined",
+    "message": "Operations should define security requirements",
+    "path": [
+      "paths",
+      "/products/{id}",
+      "put"
+    ],
+    "explanation": "L'erreur que vous rencontrez, intitulée \"operation-security-defined\", signifie qu'une opération dans votre spécification OpenAPI (dans ce cas, une requête PUT pour mettre à jour un produit) doit définir des exigences de sécurité. Cela garantit que seules les personnes ou les systèmes autorisés peuvent effectuer l'opération.\n\n### Problème :\nSur la route `PUT /products/{id}`, vous n'avez pas précisé les mécanismes de sécurité que vous souhaitez appliquer. Cela peut être problématique, car sans spécification de sécurité, il est difficile de savoir comment protéger cette opération des accès non autorisés.\n\n### Correction :\nPour corriger cette erreur, vous devez ajouter une section `security` à l'opération `PUT` de votre spécification OpenAPI. Voici un exemple de ce à quoi cela pourrait ressembler :\n\n```yaml\npaths:\n  /products/{id}:\n    put:\n      summary: Mettre à jour un produit\n      security:\n        - api_key: []  # Remplacez 'api_key' par le nom de votre méthode d'authentification\n      parameters:\n        - name: id\n          in: path\n          required: true\n          schema:\n            type: string\n        # Ajoutez d'autres paramètres ici (par exemple, le corps de la requête)\n      responses:\n        '200':\n          description: Succes\n        '401':\n          description: Non autorisé\n        # Ajoutez d'autres réponses possibles ici\n```\n\n### Explications des éléments :\n- **security** : Cette section précise quelle méthode de sécurité est requise pour cette opération. Dans l'exemple ci-dessus, nous avons utilisé `api_key` qui pourrait faire référence à un mécanisme d'authentification. Assurez-vous que le nom utilisé correspond à ce qui a été défini dans la section `components` de votre spécification OpenAPI où vous définissez vos schémas de sécurité.\n  \n### Résumé :\nAjoutez simplement une spécification de sécurité pour l'opération concernée, ce qui permettra de satisfaire à la règle de validation et de sécuriser adéquatement votre API."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/products/{id}",
+      "put",
+      "responses",
+      "200"
+    ],
+    "explanation": "L'erreur mentionnée ici est liée à une spécification OpenAPI pour une API. Voici une explication simple du problème et une proposition de correction :\n\n### Explication du problème :\n\nLa règle `response-schema-required` indique que, pour la réponse d'une requête HTTP réussie (dans ce cas, une mise à jour via la méthode PUT sur le chemin `/products/{id}`), il est nécessaire de spécifier un schéma ou un contenu qui décrit la structure des données que l'API renvoie dans sa réponse.\n\nEn d'autres termes, lorsque vous effectuez une requête PUT pour mettre à jour un produit, l'API doit clairement indiquer quel type de données sera retourné en cas de succès (ce qui est souvent un objet représentant le produit mis à jour). Actuellement, la réponse avec le code 200 (qui signifie \"succès\") n'a pas de schéma ou de contenu défini, ce qui cause cette erreur.\n\n### Proposition de correction :\n\nPour corriger ce problème, vous devez ajouter un schéma de réponse pour la réponse 200 dans la spécification OpenAPI. Voici un exemple de ce à quoi cela pourrait ressembler :\n\n```yaml\npaths:\n  /products/{id}:\n    put:\n      summary: Met à jour un produit\n      parameters:\n        - name: id\n          in: path\n          required: true\n          description: ID du produit à mettre à jour\n          schema:\n            type: string\n      responses:\n        '200':\n          description: Produit mis à jour avec succès\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  id:\n                    type: string\n                    description: L'identifiant du produit\n                  name:\n                    type: string\n                    description: Le nom du produit\n                  price:\n                    type: number\n                    description: Le prix du produit\n                  description:\n                    type: string\n                    description: La description du produit\n```\n\n### Ce que vous devez faire :\n\n1. Dans la section des réponses pour le code 200, définissez un contenu qui précise le type de données (dans cet exemple, `application/json`).\n2. Ajoutez un schéma qui décrit les propriétés de l'objet qui sera renvoyé (comme les champs `id`, `name`, `price`, et `description` pour le produit).\n\nAvec cela, votre spécification OpenAPI devrait être conforme et l'erreur devrait disparaître."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/products/{id}",
+      "put",
+      "responses",
+      "400"
+    ],
+    "explanation": "L'erreur \"response-schema-required\" signifie qu'une réponse pour le code d'état HTTP 400 dans la spécification OpenAPI ne contient pas de schéma ou de contenu défini. En d'autres termes, lorsque la requête pour mettre à jour un produit échoue (par exemple, en raison d'une validation incorrecte), il est nécessaire de spécifier ce que la réponse ressemblera. Cela aide les utilisateurs de l'API à comprendre la structure des données qu'ils recevront en cas d'erreur.\n\n### Problème :\nDans votre spécification, le chemin `/products/{id}.put.responses.400` indique que lorsque l'opération PUT sur un produit échoue, il n'y a aucune définition de ce à quoi devrait ressembler la réponse. Sans cela, les utilisateurs ne sauront pas quelles informations sont fournies lorsque quelque chose ne se passe pas comme prévu.\n\n### Correction :\nVous devez ajouter un schéma ou un contenu pour la réponse 400. Par exemple, vous pouvez définir un schéma qui décrit un message d'erreur. Voici un exemple de code que vous pourriez ajouter dans la spécification OpenAPI :\n\n```yaml\npaths:\n  /products/{id}:\n    put:\n      responses:\n        '400':\n          description: Invalid input provided\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  error:\n                    type: string\n                    example: \"Invalid product ID\"\n                  message:\n                    type: string\n                    example: \"The provided ID does not exist.\"\n```\n\nAvec cette correction, lorsque la requête échoue avec un statut 400, l'API renverra une réponse qui a une structure bien définie, ce qui aidera les développeurs à savoir comment gérer les erreurs."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/products/{id}",
+      "put",
+      "responses",
+      "404"
+    ],
+    "explanation": "L'erreur que vous rencontrez concerne une spécification OpenAPI pour une API. Voici une explication simple du problème :\n\n### Problème :\nLa règle `response-schema-required` indique que pour une réponse HTTP spécifique, comme le code de statut 404 (non trouvé), il est nécessaire de fournir un schéma ou un contenu. Cela signifie que lorsque vous définissez la réponse pour un appel PUT sur le chemin `/products/{id}`, vous devez préciser ce que l'utilisateur peut attendre comme structure de données (schéma) ou comme type de contenu (comme JSON) lorsque cette réponse est renvoyée.\n\nDans votre cas, pour la réponse 404, vous n'avez pas défini ce schéma ou ce contenu, ce qui conduit à cette erreur.\n\n### Correction :\nPour corriger ce problème, il vous suffit d'ajouter un schéma ou un contenu à la réponse 404 dans votre spécification OpenAPI. Voici un exemple de ce que vous pourriez ajouter :\n\n```yaml\npaths:\n  /products/{id}:\n    put:\n      responses:\n        '404':\n          description: \"Produit non trouvé\"\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  message:\n                    type: string\n                    example: \"Produit non trouvé\"\n```\n\nCela définit une réponse 404 qui renvoie un objet JSON contenant un message indiquant que le produit spécifié n'a pas été trouvé. Assurez-vous d'adapter le schéma à vos besoins spécifiques."
+  },
+  {
+    "code": "operation-security-defined",
+    "message": "Operations should define security requirements",
+    "path": [
+      "paths",
+      "/products/{id}",
+      "delete"
+    ],
+    "explanation": "L'erreur que vous avez détectée concerne la sécurité de votre spécification OpenAPI. Voici une explication simple du problème et une proposition de correction :\n\n### Problème :\nLa règle `operation-security-defined` indique que chaque opération (dans ce cas, la méthode `DELETE` sur le chemin `/products/{id}`) doit spécifier des exigences de sécurité. Cela signifie que vous devez indiquer quels mécanismes de sécurité doivent être appliqués pour accéder à cette opération, par exemple, une authentification par Token, OAuth, ou une clé API.\n\n### Correction :\nPour corriger cette erreur, vous devez ajouter des exigences de sécurité à l'opération `DELETE`. Voici un exemple de ce que cela pourrait donner dans votre spécification OpenAPI :\n\n```yaml\npaths:\n  /products/{id}:\n    delete:\n      summary: \"Supprimer un produit\"\n      operationId: \"deleteProduct\"\n      security:\n        - apiKey: []  # Exemple d'utilisation d'une clé API comme méthode de sécurité\n      parameters:\n        - name: id\n          in: path\n          required: true\n          description: \"L'identifiant du produit à supprimer\"\n          schema:\n            type: string\n      responses:\n        '200':\n          description: \"Produit supprimé avec succès\"\n        '404':\n          description: \"Produit non trouvé\"\n        '403':\n          description: \"Accès refusé\"\n```\n\nDans cet exemple, nous avons ajouté la section `security` à l'opération `DELETE`, en spécifiant que l'accès nécessite une clé API. Assurez-vous que la définition de la sécurité (comme `apiKey`) soit également présente dans la section de sécurité globale de votre spécification OpenAPI pour que cela soit valide."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/products/{id}",
+      "delete",
+      "responses",
+      "200"
+    ],
+    "explanation": "L'erreur que vous voyez est liée à la spécification OpenAPI que vous essayez de valider. Voici une explication simple du problème :\n\n### Problème\nLa règle `response-schema-required` signifie que pour la réponse d'une opération HTTP (dans ce cas, la méthode `DELETE` sur le chemin `/products/{id}`), il est nécessaire de définir un schéma ou un contenu pour la réponse qui doit être retournée lorsque l'opération réussit avec un code de statut 200 (OK). En d'autres termes, lorsque vous supprimez un produit, la spécification doit indiquer ce que la réponse contient - cela pourrait être un message de confirmation, une structure de données, etc.\n\n### Correction\nPour corriger ce problème, vous devez ajouter un schéma à la réponse pour le code de statut 200. Cela peut se faire en définissant la structure de la réponse, même si c'est une simple confirmation ou un message. Voici un exemple de comment cela pourrait être fait en YAML :\n\n```yaml\npaths:\n  /products/{id}:\n    delete:\n      responses:\n        200:\n          description: Produit supprimé avec succès\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  message:\n                    type: string\n                    example: \"Produit supprimé avec succès\"\n```\n\nDans cet exemple, nous avons ajouté un contenu au type `application/json` qui spécifie que la réponse contiendra un objet avec une propriété `message`, qui est de type chaîne et donne un exemple de ce que la réponse pourrait inclure. Cela respecte la règle `response-schema-required` et précise ce que le client peut attendre en réponse à une suppression réussie d'un produit."
+  },
+  {
+    "code": "path-kebab-case",
+    "message": "Paths must be in kebab-case",
+    "path": [
+      "paths",
+      "/products/createProduct"
+    ],
+    "explanation": "L'erreur que vous avez rencontrée concerne la convention de nommage des chemins (ou \"paths\") dans votre spécification OpenAPI. La règle \"path-kebab-case\" exige que les noms des chemins soient écrits en utilisant la notation kebab-case, qui utilise des tirets pour séparer les mots.\n\nDans votre cas, le chemin spécifié est `products/createProduct`. Il ne respecte pas cette convention car il utilise une combinaison de minuscules et de majuscules, ce qui n’est pas conforme au kebab-case.\n\n### Problème :\n- Le chemin `createProduct` utilise la camelCase (les mots collés, avec une majuscule pour chaque mot, sauf le premier).\n- Les chemins doivent être en kebab-case, c'est-à-dire que les mots doivent être séparés par des tirets et tous en minuscules.\n\n### Correction proposée :\nVous pouvez renommer le chemin en utilisant le kebab-case. Voici comment cela pourrait être corrigé :\n\n```yaml\npaths:\n  /products/create-product:\n    # Votre définition d'endpoint ici\n```\n\nAinsi, le chemin devient `/products/create-product`, et il respecte la convention de nomenclature requise."
+  },
+  {
+    "code": "operation-security-defined",
+    "message": "Operations should define security requirements",
+    "path": [
+      "paths",
+      "/products/createProduct",
+      "post"
+    ],
+    "explanation": "L'erreur que vous avez rencontrée se rapporte à la spécification OpenAPI que vous utilisez. Voici une explication simple du problème et comment le corriger.\n\n### Explication du problème :\nLa règle **operation-security-defined** indique que chaque opération (dans ce cas, l'opération POST pour créer un produit) doit définir les exigences de sécurité. Cela signifie que vous devez spécifier quel type de sécurité (comme l'authentification par token, OAuth2, etc.) est requis pour accéder à cette opération.\n\n### Correction proposée :\nPour corriger cette erreur, vous devez définir un ou plusieurs schémas de sécurité pour l'opération `createProduct`. Cela peut être fait en ajoutant une section `security` à la définition de l'opération dans votre fichier OpenAPI. Voici un exemple de ce à quoi cela pourrait ressembler :\n\n```yaml\npaths:\n  /products/createProduct:\n    post:\n      summary: Créer un produit\n      security:\n        - ApiKeyAuth: []  # Exemple d'utilisation d'une clé API pour la sécurité\n      requestBody:\n        required: true\n        content:\n          application/json:\n            schema:\n              type: object\n              properties:\n                name:\n                  type: string\n                price:\n                  type: number\n      responses:\n        '201':\n          description: Produit créé avec succès\n        '401':\n          description: Non autorisé\n        '400':\n          description: Demande invalide\ncomponents:\n  securitySchemes:\n    ApiKeyAuth:\n      type: apiKey\n      in: header\n      name: X-API-KEY\n```\n\n### Résumé de la correction :\n1. Ajoutez la section `security` sous l'opération POST pour `createProduct`.\n2. Définissez le type de sécurité utilisé (comme `ApiKeyAuth` dans l'exemple ci-dessus).\n3. Assurez-vous qu'il y a une définition correspondante dans la section `components.securitySchemes` pour expliquer ce qu'est `ApiKeyAuth`.\n\nEn faisant cela, vous vous conformez à la règle et garantissez que l'opération est protégée selon vos besoins de sécurité."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/products/createProduct",
+      "post",
+      "responses",
+      "201"
+    ],
+    "explanation": "L'erreur spectrale que vous avez rencontrée est liée à la définition de la réponse d'une API dans votre spécification OpenAPI. Voici ce que cela signifie en termes simples :\n\n### Problème :\nLa règle \"response-schema-required\" indique que la réponse d'une requête HTTP doit contenir un schéma ou un contenu défini. Dans votre cas, cela se réfère à la réponse HTTP 201 (Créé) pour l'endpoint `/products/createProduct`. L'erreur se produit parce qu'il n'y a pas de schéma ou de contenu spécifié pour cette réponse dans la définition de l'API. \n\n### Correction :\nPour corriger cette erreur, vous devez ajouter un schéma ou un contenu à la réponse 201. Par exemple, si la réponse retourne un objet représentant le produit créé, vous devez définir ce schéma. Voici un exemple de comment vous pourriez modifier votre spécification après la clé `responses` de la méthode `post` :\n\n```yaml\npaths:\n  /products/createProduct:\n    post:\n      responses:\n        '201':\n          description: Produit créé avec succès\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  id:\n                    type: string\n                    description: L'identifiant du produit créé\n                  name:\n                    type: string\n                    description: Le nom du produit créé\n                  price:\n                    type: number\n                    format: float\n                    description: Le prix du produit\n```\n\nDans cet exemple, nous avons ajouté une réponse qui contient une description de la réponse (produit créé avec succès) ainsi qu'un contenu qui précise que la réponse sera au format JSON et inclura un schéma définissant les propriétés `id`, `name` et `price` du produit créé.\n\nAprès avoir fait cette modification, l'erreur devrait être résolue."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/products/createProduct",
+      "post",
+      "responses",
+      "400"
+    ],
+    "explanation": "L'erreur que vous avez rencontrée indique que, dans votre spécification OpenAPI, la réponse pour le code d'état 400 (qui signifie généralement une demande invalide) ne contient pas de schéma ou de contenu défini. Cela signifie que l'API ne décrit pas ce que le client peut attendre comme réponse lorsque la requête échoue avec un statut 400.\n\n### En termes simples :\n\nLorsqu'une API renvoie une réponse avec le code 400, il est important de spécifier ce que cette réponse contiendra. Par exemple, cela peut être un message d'erreur ou des informations sur ce qui a mal tourné. Les outils qui utilisent votre spécification OpenAPI ont besoin de cette information pour savoir comment traiter correctement ces réponses.\n\n### Correction proposée :\n\nPour corriger cette erreur, vous devez définir un schéma ou un contenu pour la réponse 400 dans votre spécification. Voici un exemple de modification que vous pourriez apporter :\n\n```yaml\npaths:\n  /products/createProduct:\n    post:\n      responses:\n        '400':\n          description: Bad Request\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  error:\n                    type: string\n                    example: \"Invalid input data\"\n```\n\nDans cet exemple :\n\n- **description** : fournit une brève description de la réponse 400.\n- **content** : spécifie que la réponse sera en format JSON.\n- **schema** : définit que la réponse contiendra un objet avec une propriété `error`, qui est une chaîne de caractères. \n\nEn ajoutant ce schéma, vous répondez à la règle `response-schema-required` et assureriez que la spécification OpenAPI est complète."
+  },
+  {
+    "code": "operation-security-defined",
+    "message": "Operations should define security requirements",
+    "path": [
+      "paths",
+      "/orders",
+      "get"
+    ],
+    "explanation": "L'erreur **operation-security-defined** que vous rencontrez dans votre spécification OpenAPI indique que l'opération spécifiée (dans ce cas, la méthode `GET` sur le chemin `/orders`) doit définir des exigences de sécurité. En d'autres termes, vous devez préciser comment l'accès à cette opération est sécurisé (par exemple, en utilisant des jetons d'authentification, des clés API, etc.).\n\n### Explication simple du problème :\nCela signifie qu'il n'y a pas d'information sur la manière dont les utilisateurs ou les applications doivent s'authentifier pour accéder à la ressource `/orders`. Une bonne pratique dans les APIs sécurisées est de spécifier les mécanismes d'authentification nécessaires pour chaque opération.\n\n### Correction proposée :\nPour corriger ce problème, vous devez ajouter des spécifications de sécurité à l'opération `/orders.get`. Cela peut se faire en ajoutant une ou plusieurs exigences de sécurité dans la définition de votre opération. Voici un exemple de ce à quoi cela pourrait ressembler dans votre spécification OpenAPI :\n\n```yaml\npaths:\n  /orders:\n    get:\n      summary: Retrieves a list of orders\n      security:\n        - apiKeyAuth: []  # Exemple d'une exigence de sécurité. Assurez-vous que 'apiKeyAuth' est défini dans vos spécifications de sécurité.\n      responses:\n        '200':\n          description: A list of orders\n          ...\n```\n\nDans cet exemple, nous avons ajouté une clé de sécurité `apiKeyAuth` à la méthode `GET` sur `/orders`. Vous devrez aussi vous assurer qu'une définition de sécurité pour `apiKeyAuth` existe dans la section `components.securitySchemes` de votre spécification, comme ceci :\n\n```yaml\ncomponents:\n  securitySchemes:\n    apiKeyAuth:\n      type: apiKey\n      in: header\n      name: X-API-Key  # Nom du header utilisé pour envoyer la clé API\n```\n\nAprès avoir fait ces modifications, votre opération `/orders.get` respectera la règle de sécurité définie et vous ne devriez plus voir cette erreur dans la validation. Assurez-vous d'ajuster le type de sécurité selon vos propres besoins (par exemple, OAuth2, HTTP Basic, etc.) si nécessaire."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/orders",
+      "get",
+      "responses",
+      "400"
+    ],
+    "explanation": "L'erreur \"response-schema-required\" signifie que dans la spécification OpenAPI que vous avez fournie, la réponse pour le code d'erreur HTTP 400 (qui indique une mauvaise demande) n'a pas de schéma ou de contenu défini. Cela signifie que, lorsque le serveur renvoie une réponse avec un code d'état 400, il n'est pas clair quel type d'information sera renvoyé dans la réponse.\n\nEn termes simples, vous devez spécifier quelle structure ou quel format de données est attendu dans la réponse lorsque l'API répond avec une erreur 400. Cela aide les développeurs à comprendre ce qu'ils peuvent attendre dans cette situation.\n\n### Correction proposée :\n\nVoici un exemple de correction que vous pourriez apporter à votre spécification OpenAPI pour définir un schéma ou un contenu pour la réponse 400 :\n\n```yaml\npaths:\n  /orders:\n    get:\n      responses:\n        '400':\n          description: Bad Request\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  error:\n                    type: string\n                    example: \"Invalid order data\"\n                  code:\n                    type: integer\n                    example: 400\n```\n\nDans cet exemple :\n\n- Nous avons défini un contenu de type `application/json` pour la réponse 400.\n- Nous avons spécifié un schéma qui décrit un objet contenant les propriétés `error` (un message d'erreur) et `code` (le code d'erreur). \n\nCela permettra aux utilisateurs de l'API de savoir exactement à quoi s'attendre en cas d'erreur 400."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/orders",
+      "get",
+      "responses",
+      "500"
+    ],
+    "explanation": "L'erreur \"response-schema-required\" que vous avez rencontrée dans votre spécification OpenAPI signifie que, pour la réponse HTTP 500 (erreur serveur interne) de votre endpoint `/orders`, vous devez spécifier un schéma ou un contenu. Cela signifie que lorsqu'un client reçoit une réponse avec le code de statut 500, il est nécessaire de décrire ce que cette réponse pourrait contenir afin que les développeurs comprennent la structure des données ou le format de la réponse.\n\n**Explication simple :**\nPour chaque réponse que vous définissez dans votre OpenAPI, il est important d'indiquer ce à quoi la réponse ressemble. Dans ce cas, vous n'avez pas défini ce qu'une réponse d'erreur 500 devrait contenir, ce qui rend difficile pour les utilisateurs de votre API de savoir quoi attendre en cas de problème.\n\n**Correction :**\nPour corriger cela, vous devez ajouter une définition de schéma ou une description de contenu pour la réponse 500 dans votre spécification. Voici un exemple de ce que cela pourrait ressembler :\n\n```yaml\npaths:\n  /orders:\n    get:\n      responses:\n        '500':\n          description: \"Erreur interne du serveur\"\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  message:\n                    type: string\n                    example: \"Une erreur est survenue. Veuillez réessayer plus tard.\"\n```\n\nDans cet exemple, nous avons ajouté une description à la réponse 500 qui indique que c'est une erreur interne du serveur, et nous avons défini le contenu au format JSON, précisant que la réponse contient un message d'erreur. Cela permet de répondre à la règle de validation et donne aux utilisateurs de votre API une meilleure compréhension de la réponse qu'ils peuvent attendre en cas d'erreur."
+  },
+  {
+    "code": "operation-tag-defined",
+    "message": "Operation tags must be defined in global tags.",
+    "path": [
+      "paths",
+      "/orders",
+      "get",
+      "tags",
+      "0"
+    ],
+    "explanation": "L'erreur \"operation-tag-defined\" que vous avez rencontrée signifie que la spécification OpenAPI que vous utilisez fait référence à un tag pour une opération qui n'a pas été défini dans la section globale des tags.\n\n### Explication simple :\nDans une spécification OpenAPI, les \"tags\" sont utilisés pour grouper ou organiser les opérations (comme les requêtes GET, POST, etc.) de votre API. Avant d'utiliser un tag dans une opération (comme votre opération `GET /orders`), il est nécessaire de le définir au préalable dans une section globale intitulée \"tags\". Cela permet aux utilisateurs de l'API de mieux comprendre et naviguer dans les différentes parties de votre API.\n\n### Problème spécifiquement :\nDans votre message d'erreur, il est précisé que l'opération `GET /orders` utilise un tag (indiqué par `tags.0`) qui n'est pas défini dans la section des tags de la spécification. Cela signifie que le tag que vous essayez d'utiliser n'existe pas là où il devrait être.\n\n### Correction proposée :\n1. **Vérifiez le tag utilisé** dans votre opération `GET /orders`. \n2. **Ajoutez le tag dans la section globale des tags** si ce n'est pas déjà fait. Voici un exemple de ce à quoi cela pourrait ressembler :\n\n```yaml\nopenapi: 3.0.0\ninfo:\n  title: Exemple d'API\n  version: 1.0.0\ntags:\n  - name: orders\n    description: Opérations liées aux commandes\npaths:\n  /orders:\n    get:\n      tags:\n        - orders  # Assurez-vous que ce tag est défini ci-dessus\n      summary: Récupère la liste des commandes\n      responses:\n        '200':\n          description: Liste des commandes\n```\n\nAssurez-vous d'adapter les noms de tags et leurs descriptions selon les besoins de votre API. En ajoutant le tag \"orders\" dans la section `tags`, l'erreur devrait être résolue."
+  },
+  {
+    "code": "operation-security-defined",
+    "message": "Operations should define security requirements",
+    "path": [
+      "paths",
+      "/orders",
+      "post"
+    ],
+    "explanation": "L'erreur que vous avez rencontrée indique que l'opération `POST /orders` dans votre spécification OpenAPI doit définir des exigences de sécurité. En termes simples, cela signifie que vous devez indiquer comment cette opération doit être sécurisée, par exemple, en spécifiant les types d'authentification que vous utilisez pour protéger cette route.\n\n### Problème :\nLa route `POST /orders` n'a pas de système d'authentification ou de sécurité défini. Cela peut poser un problème car, sans spécifications de sécurité, on ne sait pas comment protéger cette opération contre des accès non autorisés.\n\n### Correction :\nPour corriger l'erreur, vous devez ajouter une définition de sécurité dans votre route `POST /orders`. Cela peut se faire en ajoutant une référence à un schéma de sécurité que vous avez défini au niveau global de votre spécification OpenAPI (comme un système d'authentification par clé API, OAuth 2.0, etc.).\n\nVoici un exemple simple d'ajout de sécurité :\n\n```yaml\nopenapi: 3.0.0\ninfo:\n  title: Exemple API\n  version: 1.0.0\nsecurity:\n  - apiKey: []  # Cela fait référence à un schéma de sécurité défini ci-dessous\n\npaths:\n  /orders:\n    post:\n      summary: Créer une commande\n      security:      # Ajoute ici la sécurité spécifique à cette opération\n        - apiKey: []\n      responses:\n        '201':\n          description: Commande créée avec succès\n          \ncomponents:\n  securitySchemes:\n    apiKey:\n      type: apiKey\n      in: header\n      name: X-API-Key\n```\n\n### Explication de la correction :\n1. **Ajout du champ `security` dans l'opération `post`** : Cela indique que cette route nécessite une certaine forme d'authentification.\n2. **Définition du schéma de sécurité dans la section `components`** : Vous spécifiez un type de sécurité (dans cet exemple, un `apiKey` dans un header) à utiliser pour authentifier les requêtes.\n\nAinsi, avec cette correction, votre spécification OpenAPI respectera la règle `operation-security-defined`."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/orders",
+      "post",
+      "responses",
+      "201"
+    ],
+    "explanation": "L'erreur que vous avez rencontrée, identifiée par la règle `response-schema-required`, indique que dans votre spécification OpenAPI, la réponse pour la route définie (`/orders` avec la méthode `POST`) n'a pas de schéma ou de contenu spécifié pour la réponse de statut `201`. Cela signifie que lorsque ce point de terminaison est appelé avec succès, la spécification ne décrit pas le format des données qui seront renvoyées au client.\n\n### Explication en termes simples :\nQuand votre application réussit à créer une commande (ce qui est représenté par un statut HTTP 201), il est nécessaire de fournir une description des données que le client peut attendre en réponse. Cela donne une structure anticipée et permet au client de comprendre comment traiter la réponse.\n\n### Proposition de correction :\nPour corriger ce problème, vous devez ajouter un schéma (ou un contenu) à la réponse pour le statut `201`. Cela pourrait ressembler à ceci :\n\n```yaml\npaths:\n  /orders:\n    post:\n      responses:\n        '201':\n          description: Commande créée avec succès\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  orderId:\n                    type: string\n                  status:\n                    type: string\n                    enum: [created, processing, completed]\n                  total:\n                    type: number\n                    format: float\n```\n\nDans cet exemple :\n- J'ai spécifié que la réponse sera au format `application/json`.\n- J'ai défini un schéma qui décrit les propriétés que le client peut attendre : un `orderId`, un `status`, et un `total`.\n\nAvec cette mise à jour, la spécification OpenAPI maintenant décrit clairement ce que la réponse 201 contient, ce qui devrait résoudre l'erreur."
+  },
+  {
+    "code": "operation-security-defined",
+    "message": "Operations should define security requirements",
+    "path": [
+      "paths",
+      "/orders/{id}",
+      "get"
+    ],
+    "explanation": "L'erreur que tu rencontres, signalée par la règle `operation-security-defined`, signifie que l'opération spécifiée dans ton fichier OpenAPI (dans ce cas, la méthode GET pour le chemin `/orders/{id}`) n'a pas de exigences de sécurité définies.\n\n**En termes simples :**\nChaque opération dans une API peut nécessiter des mesures de sécurité pour protéger les données. Par exemple, si l'accès à l'endpoint `/orders/{id}` doit être restreint à certains utilisateurs authentifiés, il faut spécifier ces exigences de sécurité dans ta documentation OpenAPI. \n\n**Proposition de correction :**\nPour corriger cette erreur, tu dois ajouter une section `security` dans ton opération GET. Voici un exemple de modification :\n\n```yaml\npaths:\n  /orders/{id}:\n    get:\n      summary: \"Récupérer une commande par ID\"\n      security:\n        - ApiKeyAuth: [] # Remplace ApiKeyAuth par le nom de ton schéma de sécurité défini plus haut\n      parameters:\n        - name: id\n          in: path\n          required: true\n          description: \"ID de la commande\"\n          schema:\n            type: string\n      responses:\n        '200':\n          description: \"Commande retournée avec succès\"\n        '404':\n          description: \"Commande non trouvée\"\n```\n\nAssure-toi également que tu as défini un schéma de sécurité (par exemple, `ApiKeyAuth`) dans la section `components.securitySchemes` de ton fichier OpenAPI afin que cela fonctionne correctement. Cela pourrait ressembler à quelque chose comme :\n\n```yaml\ncomponents:\n  securitySchemes:\n    ApiKeyAuth:\n      type: apiKey\n      in: header\n      name: X-API-KEY\n```\n\nAvec ces modifications, tu devrais respecter la règle et définir correctement les exigences de sécurité pour cette opération."
+  },
+  {
+    "code": "operation-operationId-unique",
+    "message": "Every operation must have unique \"operationId\".",
+    "path": [
+      "paths",
+      "/orders/{id}",
+      "get",
+      "operationId"
+    ],
+    "explanation": "L'erreur que vous rencontrez concerne l'identifiant d'opération (operationId) dans votre spécification OpenAPI. Chaque opération dans votre API doit avoir un identifiant unique afin d'éviter les confusions et de faciliter les références à ces opérations dans la documentation ou par le code généré.\n\n### Problème :\n\nDans votre spécification, plusieurs opérations partagent le même `operationId`. Dans ce cas particulier, l’erreur indique que l’opération pour le chemin `paths./orders/{id}.get` a un `operationId` qui n'est pas unique par rapport aux autres opérations définies dans votre spécification. Cela signifie que vous devez renommer cet `operationId` pour qu'il soit unique.\n\n### Correction :\n\nPour corriger ce problème, vous devez assurer que chaque `operationId` dans votre spécification est unique. Voici un exemple :\n\nSi votre `operationId` actuel est par exemple `getOrder` et qu'une autre opération utilise le même `operationId`, vous pouvez le renommer. Voici une proposition de correction :\n\n```yaml\npaths:\n  /orders/{id}:\n    get:\n      operationId: getOrderById  # Nouveau nom unique\n      summary: \"Récupérer une commande par son ID\"\n      parameters:\n        - name: id\n          in: path\n          required: true\n          schema:\n            type: string\n      responses:\n        '200':\n          description: \"Commande récupérée avec succès\"\n```\n\nAvec cette correction, l’identifiant d’opération est maintenant unique et respecte la règle `operation-operationId-unique`. Assurez-vous de vérifier toutes les autres opérations de votre spécification pour garantir qu'il n'y ait pas d'autre duplication de `operationId`."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/orders/{id}",
+      "get",
+      "responses",
+      "404"
+    ],
+    "explanation": "L'erreur que vous rencontrez, \"response-schema-required\", signifie que pour la réponse d'une requête GET sur le chemin `/orders/{id}`, il est nécessaire de définir un schéma (ou un contenu) pour la réponse qui a un code d'état 404. Cela indique que la ressource demandée (dans ce cas, une commande avec l'identifiant `{id}` spécifique) n'a pas été trouvée.\n\n### En d'autres termes :\nLorsque vous spécifiez une réponse pour une route dans une spécification OpenAPI, il est essentiel de décrire ce à quoi ressemble la réponse, même si c'est juste pour indiquer que quelque chose n'a pas été trouvé en lien avec l'ID donné. \n\n### Correction proposée :\nPour corriger cette erreur, vous devez ajouter un schéma ou un contenu à la réponse 404 pour définir ce que le client recevra s'il demande une commande qui n'existe pas. Par exemple, vous pourriez retourner un message d'erreur décrivant la situation.\n\nVoici un exemple de correction :\n\n```yaml\npaths:\n  /orders/{id}:\n    get:\n      responses:\n        '404':\n          description: Commande non trouvée\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  message:\n                    type: string\n                    example: \"Commande non trouvée pour l'ID spécifié.\"\n```\n\n### Explications de la correction :\n- Nous avons défini la description de la réponse 404 comme \"Commande non trouvée\".\n- Nous avons utilisé le type `application/json` pour spécifier que la réponse sera au format JSON.\n- Nous avons ajouté un schéma qui décrit un objet avec une propriété `message`, qui contiendra un texte indiquant que la commande est introuvable.\n\nAvec cette correction, la réponse 404 aura maintenant un schéma clairement défini, respectant ainsi la règle de validation."
+  },
+  {
+    "code": "path-kebab-case",
+    "message": "Paths must be in kebab-case",
+    "path": [
+      "paths",
+      "/orders/user_orders/{userId}"
+    ],
+    "explanation": "L'erreur que vous rencontrez est causée par le format du chemin dans votre spécification OpenAPI. La règle `path-kebab-case` stipule que tous les noms de chemins (paths) doivent être écrits en \"kebab-case\". Cela signifie que les mots doivent être en minuscules et séparés par des tirets (\"-\"). Par exemple, \"user-orders\" au lieu de \"userOrders\".\n\nDans votre cas, le chemin problématique est `/orders/user_orders/{userId}`, où \"user_orders\" utilise un soulignement (\"_\") au lieu d'un tiret (\"-\") et \"userId\" utilise une notation en camelCase.\n\n### Correction proposée :\nPour respecter la règle `path-kebab-case`, vous devez modifier le chemin de la manière suivante :\n\n```yaml\npaths:\n  /orders/user-orders/{user-id}:\n```\n\nMaintenant, le chemin utilise des tirets au lieu d'underscores et est en kebab-case. Assurez-vous également de mettre à jour les références au paramètre `{userId}` dans le reste de votre spécification en `{user-id}` si nécessaire."
+  },
+  {
+    "code": "operation-security-defined",
+    "message": "Operations should define security requirements",
+    "path": [
+      "paths",
+      "/orders/user_orders/{userId}",
+      "get"
+    ],
+    "explanation": "L'erreur que vous rencontrez concerne la définition des exigences de sécurité pour une opération spécifique dans votre spécification OpenAPI. Voici une explication simple du problème et comment le corriger :\n\n### Explication du problème :\n\nLa règle `operation-security-defined` indique que chaque opération (dans ce cas, l'opération GET à l'URL `/orders/user_orders/{userId}`) doit avoir des exigences de sécurité spécifiées. Cela signifie que vous devez indiquer comment les utilisateurs doivent s'authentifier ou s'autoriser l'accès à cette opération. Par exemple, vous pourriez exiger un jeton d'authentification, OAuth2, etc.\n\n### Correction à apporter :\n\nPour résoudre cette erreur, vous devez ajouter une section `security` à l'opération concernée. Voici un exemple de ce que cela pourrait donner :\n\n```yaml\npaths:\n  /orders/user_orders/{userId}:\n    get:\n      security:\n        - bearerAuth: []  # Exemple d'un schéma d'authentification par jeton\n      summary: \"Obtenir les commandes de l'utilisateur\"\n      parameters:\n        - name: userId\n          in: path\n          required: true\n          description: \"L'ID de l'utilisateur dont on souhaite récupérer les commandes\"\n          schema:\n            type: string\n      responses:\n        '200':\n          description: \"Liste des commandes de l'utilisateur\"\n          content:\n            application/json:\n              schema:\n                type: array\n                items:\n                  type: object\n                  properties:\n                    orderId:\n                      type: string\n                    status:\n                      type: string\n```\n\n### Points à retenir :\n\n1. **Schéma de sécurité** : Le nom du schéma de sécurité (ici `bearerAuth`) doit correspondre à celui que vous avez défini dans la section `components.securitySchemes` de votre spécification OpenAPI.\n   \n2. **Validation des erreurs** : Une fois que vous avez ajouté cette section, exécutez à nouveau votre validation pour vous assurer que l'erreur a disparu.\n\nEn ajoutant ces exigences de sécurité, vous vous assurez que seuls les utilisateurs autorisés peuvent accéder à cette opération, ce qui est essentiel pour la protection de vos données."
+  },
+  {
+    "code": "path-kebab-case",
+    "message": "Paths must be in kebab-case",
+    "path": [
+      "paths",
+      "/orders/{id}/cancel"
+    ],
+    "explanation": "L'erreur que vous rencontrez est liée à la convention de nommage des chemins dans votre spécification OpenAPI. La règle \"path-kebab-case\" indique que tous les chemins doivent être écrits en utilisant le format \"kebab-case\". Ce format consiste à utiliser des lettres minuscules pour les mots et à les séparer par des tirets (\"-\").\n\nDans votre cas, le chemin `/orders/{id}/cancel` contient un mot en \"snake-case\" (\"cancel\"), mais ce n'est pas le problème principal. En fait, pour être entièrement conforme à la règle, vous devez vérifier si le chemin respecte la convention du \"kebab-case\", en particulier concernant le nom des segments qui le composent.\n\n### Problème\nLe chemin `/orders/{id}/cancel` contient un segment \"cancel\" qui est correct, mais la structure globale et la convention demandée peuvent suggérer que d'autres parties doivent aussi être vérifiées si elles sont en accord avec le format requis.\n\n### Correction Proposée\nIl semble que le chemin `/orders/{id}/cancel` devrait également être vérifié pour savoir si les éléments sont conformes aux règles du chemin. Toutefois, si nous prenons en compte uniquement le segment, il n'y a pas de correction nécessaire pour \"cancel\". Au lieu de cela, assurez-vous que tous les chemins ressemblent à des formats qui ne mélangent pas des mots en kebab-case avec d'autres conventions.\n\nSi d'autres parties dans votre spécification utilisent des notations différentes pour les chemins ou segments (par exemple, en utilisant des underscores ou en mixant majuscules et minuscules), vous devez les ajuster.\n\n### Exemple de correction\nAssurez-vous que votre chemin utilise uniquement des minuscules et des tirets (s'il y avait des parties précédentes à corriger). Par exemple :\n\n```yaml\npaths:\n  /orders/{id}/cancel: \n    # Contenu de la spécification\n```\n\nDans cet exemple, il n'y a pas de changement à apporter si \"cancel\" est déjà conforme. Assurez-vous simplement que d'autres chemins suivent cette convention.\n\nSi votre spécification inclut finalement quelque chose de similaire à `/Orders/{Id}/Cancel`, alors cela nécessiterait des ajustements pour respecter les règles de kebab-case (qui nécessiterait aussi d'utiliser uniquement des minuscules)."
+  },
+  {
+    "code": "operation-security-defined",
+    "message": "Operations should define security requirements",
+    "path": [
+      "paths",
+      "/orders/{id}/cancel",
+      "post"
+    ],
+    "explanation": "L'erreur \"operation-security-defined\" indique que l'opération spécifiée dans votre spécification OpenAPI (dans ce cas, l'opération POST sur le chemin `/orders/{id}/cancel`) ne définit pas les exigences de sécurité. Cela signifie que vous n'avez pas précisé comment cette opération doit être sécurisée, par exemple, en indiquant quel type d'authentification ou d'autorisation est nécessaire pour y accéder.\n\n### Explication simple du problème :\nChaque opération dans l'API (comme annuler une commande) doit avoir des règles de sécurité définies pour indiquer comment les utilisateurs doivent s'authentifier ou se faire autoriser à effectuer cette opération. Si ces règles sont manquantes, cela peut poser des problèmes de sécurité.\n\n### Correction proposée :\nPour corriger cette erreur, vous devez ajouter un bloc `security` à l'opération concernée. Voici un exemple de ce à quoi cela pourrait ressembler dans votre spécification OpenAPI :\n\n```yaml\npaths:\n  /orders/{id}/cancel:\n    post:\n      summary: Annule une commande\n      security:\n        - bearerAuth: []  # Exemple d'authentification utilisant des jetons Bearer\n      responses:\n        '200':\n          description: Commande annulée avec succès\n        '401':\n          description: Non autorisé\n        '404':\n          description: Commande non trouvée\n```\n\nDans cet exemple, `bearerAuth` doit être défini au niveau de la sécurité globale de votre spécification. Vous devez vous assurer que l'authentification que vous souhaitez utiliser est bien définie dans la section `securitySchemes` de votre spécification.\n\nAssurez-vous de modifier cela selon le type de sécurité qui convient à votre API (comme OAuth2, API Key, etc.)."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/orders/{id}/cancel",
+      "post",
+      "responses",
+      "200"
+    ],
+    "explanation": "L'erreur que vous avez rencontrée est liée à la spécification OpenAPI pour votre endpoint qui gère l'annulation d'une commande. Voici une explication simple et une proposition de correction :\n\n### Explication du problème :\n\nLa règle `response-schema-required` indique que pour toutes les réponses d'un endpoint (dans ce cas, une requête `POST` pour annuler une commande), il est nécessaire de définir un schéma ou un contenu qui décrit ce que la réponse doit contenir. Cela permet aux utilisateurs de savoir quel type de données et de structure attendre en réponse à leur requête.\n\nDans votre cas, pour l'endpoint `POST /orders/{id}/cancel`, la réponse HTTP 200 (qui signifie que la demande a réussi) ne contient pas cette définition, ce qui entraîne une erreur. Cela signifie que lorsque quelqu'un annule une commande avec succès, il n'y a aucune indication sur ce que la réponse devrait être.\n\n### Proposition de correction :\n\nVous devez ajouter une définition pour la réponse 200 dans le fichier OpenAPI. Voici un exemple de ce que vous pourriez ajouter :\n\n```yaml\npaths:\n  /orders/{id}/cancel:\n    post:\n      summary: Annuler une commande\n      responses:\n        '200':\n          description: Commande annulée avec succès\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  success:\n                    type: boolean\n                    example: true\n                  message:\n                    type: string\n                    example: \"La commande a été annulée avec succès.\"\n```\n\n### Détails de la correction :\n\nAvec cette ajout, la réponse 200 est maintenant clairement définie, indiquant que le format de la réponse sera du JSON contenant deux propriétés : \n- `success`, qui est un booléen indiquant si l'annulation a réussi ou non.\n- `message`, qui fournit un texte descriptif concernant l'état de la réponse.\n\nAssurez-vous d'adapter ce schéma selon vos besoins spécifiques et la logique de votre application."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/orders/{id}/cancel",
+      "post",
+      "responses",
+      "400"
+    ],
+    "explanation": "L'erreur que vous avez rencontrée, \"response-schema-required\", indique qu'il manque un schéma ou un contenu défini pour la réponse avec le code de statut 400 de l'API, spécifiquement pour le chemin `/orders/{id}/cancel` lorsqu'une requête POST est effectuée.\n\n### En termes simples :\nCela signifie que lorsque la requête échoue et que l'API retourne une erreur 400 (mauvaise requête), il n'y a pas de description de la structure de la réponse que le client peut s'attendre à recevoir. Les spécifications OpenAPI exigent que chaque réponse ait un schéma (une définition de ce à quoi ressemble la réponse) ou un contenu qui décrit ce que le client peut recevoir.\n\n### Proposition de correction :\nPour corriger le problème, vous devez ajouter un schéma ou un contenu pour la réponse 400 dans votre spécification OpenAPI. Voici un exemple simple de ce à quoi cela pourrait ressembler :\n\n```yaml\npaths:\n  /orders/{id}/cancel:\n    post:\n      responses:\n        '400':\n          description: Mauvaise requête\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  error:\n                    type: string\n                    description: Description de l'erreur\n                    example: \"La commande n'existe pas ou ne peut pas être annulée.\"\n```\n\nDans cet exemple, nous avons défini que si la réponse est un code 400, elle sera au format JSON et contiendra un objet avec une propriété `error`, qui fournit des informations sur la nature de l'erreur. Assurez-vous d'ajuster le contenu et la structure en fonction des erreurs spécifiques que votre API peut renvoyer."
+  },
+  {
+    "code": "response-schema-required",
+    "message": "Response must have a schema or content defined",
+    "path": [
+      "paths",
+      "/orders/{id}/cancel",
+      "post",
+      "responses",
+      "404"
+    ],
+    "explanation": "L'erreur \"response-schema-required\" signifie que la réponse de votre API pour la requête POST sur le chemin `/orders/{id}/cancel` doit spécifier un schéma ou un contenu, mais cela n'est pas le cas pour le code de réponse 404 (non trouvé).\n\nEn termes simples, cela signifie que lorsque la requête pour annuler une commande échoue parce que la commande n'existe pas (code 404), votre spécification OpenAPI doit décrire ce que la réponse devrait contenir. Actuellement, il n'y a pas de définition qui indique ce que le client peut s'attendre à recevoir en cas d'erreur (404).\n\n### Correction proposée :\n\nPour corriger cette erreur, vous devez ajouter un schéma ou contenu à la réponse 404 dans votre spécification OpenAPI pour le endpoint `/orders/{id}/cancel`. Voici un exemple de ce à quoi cela pourrait ressembler:\n\n```yaml\npaths:\n  /orders/{id}/cancel:\n    post:\n      responses:\n        404:\n          description: Order not found\n          content:\n            application/json:\n              schema:\n                type: object\n                properties:\n                  error:\n                    type: string\n                    example: \"Order not found\"\n```\n\nDans cet exemple, nous avons ajouté la description de la réponse 404 et spécifié que le contenu de la réponse est au format JSON. Nous avons également défini un schéma qui indique que la réponse contiendra un champ `error` avec un message d'erreur approprié. \n\nAssurez-vous d'adapter le schéma en fonction de ce que vous souhaitez renvoyer dans votre API."
+  },
+  {
+    "code": "operation-summary",
+    "message": "Each route must have a clear summary",
+    "path": [
+      "paths",
+      "/orders/{id}/cancel",
+      "post",
+      "summary"
+    ],
+    "explanation": "L'erreur que vous avez rencontrée indique qu'une des routes (ici, la route pour annuler une commande) de votre spécification OpenAPI ne possède pas de résumé clair. En termes simples, chaque opération d'API (comme annuler une commande) doit avoir une description courte qui explique ce que cette opération fait. Cela aide les développeurs qui lisent la documentation à comprendre rapidement le but de la route.\n\n### Problème :\nPour la route `POST /orders/{id}/cancel`, il manque un résumé (`summary`). Cela rend la documentation moins claire et peut compliquer l'utilisation de l'API.\n\n### Correction :\nPour corriger ce problème, vous devez ajouter un résumé clair à l'opération `POST /orders/{id}/cancel`. Voici un exemple de ce à quoi cela pourrait ressembler :\n\n```yaml\npaths:\n  /orders/{id}/cancel:\n    post:\n      summary: \"Annule une commande spécifique\"\n      description: \"Cette opération permet d'annuler la commande identifiée par l'ID fourni.\"\n      parameters:\n        - name: id\n          in: path\n          required: true\n          schema:\n            type: string\n      responses:\n        '200':\n          description: \"Commande annulée avec succès.\"\n        '404':\n          description: \"Commande non trouvée.\"\n```\n\nDans cet exemple, le résumé \"Annule une commande spécifique\" donne une idée claire de ce que fait cette route. N'oubliez pas de personnaliser le résumé et la description selon vos besoins spécifiques. Cela améliorera la lisibilité et la compréhension de votre documentation d'API."
+  }
+]
