@@ -13,13 +13,16 @@ async function bootstrap() {
     .setVersion('1.0.0')
     .addServer(`http://localhost:${process.env.API_PORT || 3000}`, 'Local development server')
     .addTag('users', 'User management endpoints')
+    .addTag('products', 'Product management endpoints')
+    .addTag('Health', 'API health and information endpoints')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  
+
   SwaggerModule.setup('docs', app, document);
 
-  
+
   const yaml = require('js-yaml');
   const outPath = join(__dirname, '..', 'openapi.yaml');
   writeFileSync(outPath, yaml.dump(document), 'utf8');

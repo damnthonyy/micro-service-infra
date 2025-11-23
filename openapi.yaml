@@ -1,6 +1,6 @@
 openapi: 3.0.0
 paths:
-  /:
+  /health:
     get:
       description: Returns API information and available endpoints
       operationId: RootController_getRoot
@@ -8,290 +8,236 @@ paths:
       responses:
         '200':
           description: API information retrieved successfully
-      summary: API Information
-      tags:
-        - root
-  /users:
-    get:
-      description: Retrieves a list of all users in the system
-      operationId: AppController_getUsers
-      parameters: []
-      responses:
-        '200':
-          description: List of users successfully retrieved
-      summary: Get all users
-      tags: &ref_0
-        - users
-  /users/{id}:
-    get:
-      description: Retrieves a specific user by their unique identifier
-      operationId: AppController_getUser
-      parameters:
-        - name: id
-          required: true
-          in: path
-          description: User id
-          schema:
-            type: number
-      responses:
-        '200':
-          description: User found
-      summary: Get a user by id
-      tags: *ref_0
-  /products:
-    get:
-      description: Retrieves a list of all available products in the catalog
-      operationId: getAllProducts
-      parameters: []
-      responses:
-        '200':
-          description: List of products successfully retrieved
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: number
-                    name:
-                      type: string
-                    price:
-                      type: number
-        '500':
-          description: Internal server error
-      summary: Get all products
+                $ref: '#/components/schemas/ApiInfoResponseDto'
+      security:
+        - bearer: []
+      summary: API Information
+      tags:
+        - Health
+  /products/create:
+    post:
+      description: Creates a new product in the system
+      operationId: ProductController_createProduct
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductDto'
+      responses:
+        '200':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseProductDto'
+        '400':
+          description: An unexpected error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDto'
+      security: &ref_0
+        - bearer: []
+      summary: Create a new product
       tags: &ref_1
         - products
   /products/{id}:
-    get:
-      operationId: getProductById
-      parameters:
-        - name: id
-          required: true
-          in: path
-          description: Product unique identifier
-          schema:
-            type: number
-      responses:
-        '200':
-          description: Product found
-      summary: Get product by id
-      tags: *ref_1
     put:
-      description: Updates an existing product by its identifier
-      operationId: updateProduct
+      description: Updates an existing product by its ID
+      operationId: ProductController_updateProduct
       parameters:
         - name: id
           required: true
           in: path
-          description: Product unique identifier
           schema:
-            type: number
+            type: string
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                price:
-                  type: number
+              $ref: '#/components/schemas/UpdateProductDto'
       responses:
         '200':
           description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseProductDto'
         '400':
-          description: Invalid input data
+          description: An unexpected error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDto'
         '404':
           description: Product not found
-      summary: Update a product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDto'
+      security: *ref_0
+      summary: Update a product by id
       tags: *ref_1
     delete:
-      description: Deletes a product from the catalog
-      operationId: ProductsController_deleteProduct
+      description: Deletes a product by its ID
+      operationId: ProductController_deleteProduct
       parameters:
         - name: id
           required: true
           in: path
           schema:
-            type: number
-      responses:
-        '200':
-          description: Product deleted successfully
-      summary: Delete product
-      tags: *ref_1
-  /products/createProduct:
-    post:
-      description: Creates a new product in the catalog
-      operationId: createProduct
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                price:
-                  type: number
-              required:
-                - name
-                - price
-      responses:
-        '201':
-          description: Product created successfully
-        '400':
-          description: Invalid input data
-      summary: Create a new product
-      tags: *ref_1
-  /orders:
-    get:
-      description: Retrieves a list of all orders with optional filtering
-      operationId: getAllOrders
-      parameters:
-        - name: status
-          required: false
-          in: query
-          description: Filter orders by status
-          schema:
-            enum:
-              - pending
-              - completed
-              - cancelled
             type: string
       responses:
-        '200':
-          description: List of orders successfully retrieved
+        '204':
+          description: Product deleted successfully
+        '400':
+          description: An unexpected error occurred
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: number
-                    userId:
-                      type: number
-                    status:
-                      type: string
-                    total:
-                      type: number
-        '400':
-          description: Invalid filter parameters
-        '500':
-          description: Internal server error
-      summary: Get all orders
-      tags: &ref_2
-        - orders
+                $ref: '#/components/schemas/ErrorResponseDto'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDto'
+      security: *ref_0
+      summary: Delete a product by id
+      tags: *ref_1
+  /users/validate:
     post:
-      description: Creates a new order for a user
-      operationId: createOrder
+      description: Validates user credentials and returns user details
+      operationId: UserController_validateUser
       parameters: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                userId:
-                  type: number
-                items:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      productId:
-                        type: number
-                      quantity:
-                        type: number
-              required:
-                - userId
-                - items
-      responses:
-        '201':
-          description: Order created successfully
-      summary: Create a new order
-      tags: *ref_2
-  /orders/{id}:
-    get:
-      description: Retrieves a specific order by its unique identifier
-      operationId: getProductById
-      parameters:
-        - name: id
-          required: true
-          in: path
-          description: Order unique identifier
-          schema:
-            type: number
+              $ref: '#/components/schemas/ValidateUserDto'
       responses:
         '200':
-          description: Order found
+          description: User validated successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: number
-                  userId:
-                    type: number
-                  status:
-                    type: string
-                  total:
-                    type: number
-        '404':
-          description: Order not found
-      summary: Get order by id
-      tags: *ref_2
-  /orders/user_orders/{userId}:
-    get:
-      description: Retrieves all orders for a specific user
-      operationId: getUserOrders
-      parameters:
-        - name: userId
-          required: true
-          in: path
-          description: User unique identifier
-          schema:
-            type: number
-      responses:
-        '200':
-          description: User orders retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-      summary: Get orders by user
-      tags: *ref_2
-  /orders/{id}/cancel:
-    post:
-      description: Cancels an existing order
-      operationId: cancelOrder
-      parameters:
-        - name: id
-          required: true
-          in: path
-          description: Order unique identifier
-          schema:
-            type: number
-      responses:
-        '200':
-          description: Order cancelled successfully
+                $ref: '#/components/schemas/ResponseUserDto'
         '400':
-          description: Order cannot be cancelled
+          description: An unexpected error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDto'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDto'
+      security: &ref_2
+        - bearer: []
+      summary: Validate user credentials
+      tags: &ref_3
+        - users
+  /users/create:
+    post:
+      description: Creates a new user in the system
+      operationId: UserController_createUser
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserDto'
+      responses:
+        '200':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseUserDto'
+        '400':
+          description: An unexpected error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDto'
+      security: *ref_2
+      summary: Create a new user
+      tags: *ref_3
+  /users/{id}:
+    put:
+      description: Updates an existing user by its ID
+      operationId: UserController_updateUser
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseUserDto'
+        '400':
+          description: An unexpected error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDto'
         '404':
-          description: Order not found
-      summary: ''
-      tags: *ref_2
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDto'
+      security: *ref_2
+      summary: Update a user by id
+      tags: *ref_3
+    delete:
+      description: Deletes a user by its ID
+      operationId: UserController_deleteUser
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User deleted successfully
+        '400':
+          description: An unexpected error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDto'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDto'
+      security: *ref_2
+      summary: Delete a user by id
+      tags: *ref_3
 info:
   title: Backend Microservice Infra Boilerplate
   description: Backend Microservice Infra Boilerplate
@@ -300,8 +246,195 @@ info:
 tags:
   - name: users
     description: User management endpoints
+  - name: products
+    description: Product management endpoints
+  - name: Health
+    description: API health and information endpoints
 servers:
   - url: http://localhost:3000
     description: Local development server
 components:
-  schemas: {}
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+  schemas:
+    ApiInfoResponseDto:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Welcome to Backend Microservice Infra Boilerplate API
+        version:
+          type: string
+          example: 1.0.0
+        documentation:
+          type: string
+          example: /docs
+        endpoints:
+          type: object
+          example:
+            users: /users
+            products: /products
+            swagger: /docs
+      required:
+        - message
+        - version
+        - documentation
+        - endpoints
+    CreateProductDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          type: string
+          example: Product Name
+        price:
+          type: number
+          example: 10
+        description:
+          type: string
+          example: Product Description
+        stock:
+          type: number
+          example: 10
+      required:
+        - id
+        - name
+        - price
+        - description
+        - stock
+    ResponseProductDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        description:
+          type: string
+        stock:
+          type: number
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        deletedAt:
+          type: object
+          nullable: true
+      required:
+        - id
+        - name
+        - price
+        - description
+        - stock
+        - createdAt
+        - updatedAt
+        - deletedAt
+    ErrorResponseDto:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          example: 400
+        message:
+          type: string
+          example: Bad Request
+        error:
+          type: string
+          example: Validation failed
+      required:
+        - statusCode
+        - message
+        - error
+    UpdateProductDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+        price:
+          type: number
+          example: 10
+        stock:
+          type: number
+          example: 10
+      required:
+        - id
+        - price
+        - stock
+    ValidateUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john.doe@example.com
+        password:
+          type: string
+          example: password
+      required:
+        - email
+        - password
+    ResponseUserDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john.doe@example.com
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - email
+        - createdAt
+        - updatedAt
+    CreateUserDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john.doe@example.com
+        password:
+          type: string
+          example: password
+      required:
+        - name
+        - email
+        - password
+    UpdateUserDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          type: string
+          example: John Doe
+        password:
+          type: string
+          example: password
+      required:
+        - id
+        - name
+        - password

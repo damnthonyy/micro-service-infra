@@ -1,15 +1,15 @@
-import fs from "fs";
+const fs = require("fs");
 
 function formatReportForPR() {
   const reportPath = "spectral-llm-report.json";
-  
+
   if (!fs.existsSync(reportPath)) {
     console.error("❌ Aucun fichier spectral-llm-report.json trouvé !");
     process.exit(1);
   }
 
   const report = JSON.parse(fs.readFileSync(reportPath, "utf8"));
-  
+
   if (!report || report.length === 0) {
     return "## ✅ Rapport de validation OpenAPI\n\n🎉 Aucune erreur détectée ! Votre spécification OpenAPI est conforme.";
   }
@@ -31,7 +31,7 @@ function formatReportForPR() {
   Object.entries(groupedByCode).forEach(([code, items]) => {
     markdown += `### 🔴 ${code}\n\n`;
     markdown += `**Occurrences :** ${items.length}\n\n`;
-    
+
     items.forEach((item, index) => {
       const path = item.path ? item.path.join(" → ") : "N/A";
       markdown += `#### Erreur ${index + 1}\n\n`;
