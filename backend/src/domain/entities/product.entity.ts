@@ -1,6 +1,6 @@
 export class ProductEntity {
     constructor(
-        public id: string,
+        public id: string | null,
         public name: string,
         public price: number,
         public description: string,

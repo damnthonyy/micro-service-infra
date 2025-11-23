@@ -2,7 +2,7 @@ import { UserRepository } from '../../../domain/repositories/user.repository';
 import { UserEntity } from '../../../domain/entities/user.entity';
 import { NotFoundException, ConflictException } from '@nestjs/common';
 import { UpdateUserDto } from '../../dtos/user/update-user.dto';
-
+import * as bcrypt from 'bcrypt';
 export class UpdateUserUsecase {
     // Constructor injection of the user repository
     constructor(private readonly userRepository: UserRepository) {
@@ -14,16 +14,10 @@ export class UpdateUserUsecase {
         if (!user) {
             throw new NotFoundException('User not found');
         }
-        // Update the user
+        // update user
         user.name = dto.name;
-        user.password = dto.password;
-        // Validate the user
-        const existingUser = await this.userRepository.findById(dto.id);
-        if (existingUser) {
-            throw new ConflictException('User already exists');
-        }
-        // Update the user in the database
-        await this.userRepository.update(user);
-        return user;
+        const saltRounds = 10;
+        user.password = await bcrypt.hash(dto.password, saltRounds);
+        return await this.userRepository.update(user);
     }
 }

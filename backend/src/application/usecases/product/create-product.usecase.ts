@@ -13,8 +13,8 @@ export class CreateProductUsecase {
     }
 
     async execute(dto: CreateProductDto): Promise<ProductEntity> {
-        const product = new ProductEntity(dto.id, dto.name, dto.price, dto.description, dto.stock, new Date(), new Date(), null);
-        const existingProduct = await this.productRepository.findById(dto.id);
+        const product = new ProductEntity(null, dto.name, dto.price, dto.description, dto.stock, new Date(), new Date(), null);
+        const existingProduct = await this.productRepository.findByName(dto.name);
         if (existingProduct) {
             throw new ConflictException('Product already exists');
         }
