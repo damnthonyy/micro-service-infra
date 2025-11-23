@@ -46,4 +46,10 @@ export class ProductRepositoryPg implements ProductRepository {
         await this.productRepository.delete(id);
         return product;
     }
+
+    async findByName(name: string): Promise<ProductDomainEntity | null> {
+        const product = await this.productRepository.findOneBy({ name });
+        if (!product) return null;
+        return ProductMapper.toDomain(product);
+    }
 }

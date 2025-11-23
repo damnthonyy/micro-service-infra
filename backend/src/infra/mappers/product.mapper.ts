@@ -17,7 +17,7 @@ export class ProductMapper {
 
     static toPersistence(domain: ProductDomainEntity): ProductEntityPg {
         const entity = new ProductEntityPg();
-        entity.id = domain.id;
+        entity.id = domain.id!;
         entity.name = domain.name;
         entity.price = domain.price;
         entity.description = domain.description;
