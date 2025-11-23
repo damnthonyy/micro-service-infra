@@ -1,7 +1,7 @@
-import { UserRepository } from '../../domain/repositories/user.repository';
-import { UserEntity } from '../../domain/entities/user.entity';
+import { UserRepository } from '../../../domain/repositories/user.repository';
+import { UserEntity } from '../../../domain/entities/user.entity';
 import { NotFoundException } from '@nestjs/common';
-import { DeleteUserDto } from '../dtos/delete-user.dto';
+import { DeleteUserDto } from '../../dtos/user/delete-user.dto';
 
 export class DeleteUserUsecase {
     // Constructor injection of the user repository
@@ -16,8 +16,7 @@ export class DeleteUserUsecase {
         if (!user) {
             throw new NotFoundException('User not found');
         }
-        // Validate the user
-        await this.userRepository.validateUser(user);
+
         // Delete the user
         await this.userRepository.delete(dto.id);
         // Return the user

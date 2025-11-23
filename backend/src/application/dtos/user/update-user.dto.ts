@@ -1,15 +1,19 @@
-import { IsString, IsNotEmpty, MinLength, MaxLength, Matches, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, MinLength, MaxLength, Matches, IsUUID } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateUserDto {
 
-    @IsNumber()
+    @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
+    @IsUUID()
     @IsNotEmpty()
-    id: number;
+    id: string;
 
+    @ApiProperty({ example: 'John Doe' })
     @IsString()
     @IsNotEmpty()
     name: string;
 
+    @ApiProperty({ example: 'password' })
     @IsString()
     @IsNotEmpty()
     @MinLength(8)

@@ -1,8 +1,8 @@
-import { UserRepository } from '../../domain/repositories/user.repository';
-import { ValidateUserDto } from '../dtos/validate-user.dto';
+import { UserRepository } from '../../../domain/repositories/user.repository';
+import { ValidateUserDto } from '../../dtos/user/validate-user.dto';
 import * as bcrypt from 'bcrypt';
 import { UnauthorizedException } from '@nestjs/common';
-import { UserEntity } from '../../domain/entities/user.entity';
+import { UserEntity } from '../../../domain/entities/user.entity';
 
 export class ValidateUserUsecase {
     constructor(private readonly userRepository: UserRepository) {
